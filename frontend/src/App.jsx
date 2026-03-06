@@ -8,6 +8,7 @@ function App() {
   const [health, setHealth] = useState(null)
   const [countries, setCountries] = useState([])
   const [selectedCountryCode, setSelectedCountryCode] = useState('')
+  const [partners, setPartners] = useState([])
 
   useEffect(() => {
     fetch(`${apiBaseUrl}/api/health`)
@@ -33,12 +34,21 @@ function App() {
       .catch(() => setCountries([]))
   }, [])
 
+  useEffect(() => {
+    if (!selectedCountryCode) return
+
+    fetch(`${apiBaseUrl}/api/trade/partners?reporter=${selectedCountryCode}`)
+      .then((res) => res.json())
+      .then((data) => setPartners(data))
+      .catch(() => setPartners([]))
+  }, [selectedCountryCode])
+
   const selectedCountry = useMemo(
     () => countries.find((country) => country.code === selectedCountryCode),
     [countries, selectedCountryCode],
   )
 
-  const chartOption = {
+  const trendChartOption = {
     title: {
       text: selectedCountry
         ? `Mock Trade Trend - ${selectedCountry.name}`
@@ -63,8 +73,39 @@ function App() {
     ],
   }
 
+  const partnersChartOption = {
+    title: {
+      text: selectedCountry
+        ? `Top Trading Partners - ${selectedCountry.name}`
+        : 'Top Trading Partners',
+    },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow',
+      },
+    },
+    xAxis: {
+      type: 'category',
+      data: partners.map((partner) => partner.partnerName),
+      axisLabel: {
+        rotate: 25,
+      },
+    },
+    yAxis: {
+      type: 'value',
+      name: 'Trade value',
+    },
+    series: [
+      {
+        data: partners.map((partner) => partner.tradeValue),
+        type: 'bar',
+      },
+    ],
+  }
+
   return (
-    <div style={{ padding: '2rem', fontFamily: 'Arial, sans-serif', maxWidth: '960px', margin: '0 auto' }}>
+    <div style={{ padding: '2rem', fontFamily: 'Arial, sans-serif', maxWidth: '1100px', margin: '0 auto' }}>
       <h1>Country Trade Explorer</h1>
 
       <section style={{ marginBottom: '2rem' }}>
@@ -107,9 +148,14 @@ function App() {
         )}
       </section>
 
+      <section style={{ marginBottom: '2rem' }}>
+        <h2>Mock Top Trading Partners</h2>
+        <ReactECharts option={partnersChartOption} style={{ height: '400px' }} />
+      </section>
+
       <section>
         <h2>Mock Trade Trend</h2>
-        <ReactECharts option={chartOption} style={{ height: '400px' }} />
+        <ReactECharts option={trendChartOption} style={{ height: '400px' }} />
       </section>
     </div>
   )
