@@ -62,3 +62,5 @@ npm run dev
 - frontend connectivity test to backend API
 - initial Apache ECharts mock line chart
 - CORS enabled for local frontend development
+- mock backend countries endpoint at /api/countries
+- frontend country dropdown wired to backend country data
