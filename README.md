@@ -55,3 +55,10 @@ mvn spring-boot:run
 cd frontend
 npm run dev
 ```
+
+## Current implemented step
+
+- backend health endpoint at `/api/health`
+- frontend connectivity test to backend API
+- initial Apache ECharts mock line chart
+- CORS enabled for local frontend development
