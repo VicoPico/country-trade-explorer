@@ -31,3 +31,7 @@
 - Use Flyway for versioned PostgreSQL schema migrations so database structure evolves through tracked code changes.
 - Introduce an initial relational schema with a `country` reference table and a `trade_observation` table as the first persistence foundation.
 - Seed a small set of countries through a migration to support local development before repository-backed loading is implemented.
+
+- Use PostgreSQL in Docker as the default local database setup instead of relying on a host-installed PostgreSQL instance.
+- Introduce Spring Data JPA for the `country` table first, keeping the initial persistence step small and low-risk.
+- Configure Hibernate with `ddl-auto=validate` so Flyway remains the source of truth for schema management.

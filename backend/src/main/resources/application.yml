@@ -5,9 +5,13 @@ spring:
   application:
     name: country-trade-explorer
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:trade_explorer}
-    username: ${DB_USER:postgres}
-    password: ${DB_PASSWORD:postgres}
+    url: jdbc:postgresql://${CTE_DB_HOST:localhost}:${CTE_DB_PORT:5434}/${CTE_DB_NAME:trade_explorer}
+    username: ${CTE_DB_USER:postgres}
+    password: ${CTE_DB_PASSWORD:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
   flyway:
     enabled: true
     locations: classpath:db/migration
