@@ -9,6 +9,8 @@ function App() {
   const [countries, setCountries] = useState([])
   const [selectedCountryCode, setSelectedCountryCode] = useState('')
   const [partners, setPartners] = useState([])
+  const [trendData, setTrendData] = useState([])
+  const [products, setProducts] = useState([])
 
   useEffect(() => {
     fetch(`${apiBaseUrl}/api/health`)
@@ -43,6 +45,24 @@ function App() {
       .catch(() => setPartners([]))
   }, [selectedCountryCode])
 
+  useEffect(() => {
+    if (!selectedCountryCode) return
+
+    fetch(`${apiBaseUrl}/api/trade/bilateral?reporter=${selectedCountryCode}`)
+      .then((res) => res.json())
+      .then((data) => setTrendData(data))
+      .catch(() => setTrendData([]))
+  }, [selectedCountryCode])
+
+  useEffect(() => {
+    if (!selectedCountryCode) return
+
+    fetch(`${apiBaseUrl}/api/trade/products?reporter=${selectedCountryCode}`)
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+      .catch(() => setProducts([]))
+  }, [selectedCountryCode])
+
   const selectedCountry = useMemo(
     () => countries.find((country) => country.code === selectedCountryCode),
     [countries, selectedCountryCode],
@@ -59,14 +79,15 @@ function App() {
     },
     xAxis: {
       type: 'category',
-      data: ['2021', '2022', '2023', '2024'],
+      data: trendData.map((item) => item.year),
     },
     yAxis: {
       type: 'value',
+      name: 'Trade value',
     },
     series: [
       {
-        data: [120, 200, 150, 280],
+        data: trendData.map((item) => item.tradeValue),
         type: 'line',
         smooth: true,
       },
@@ -99,6 +120,37 @@ function App() {
     series: [
       {
         data: partners.map((partner) => partner.tradeValue),
+        type: 'bar',
+      },
+    ],
+  }
+
+  const productsChartOption = {
+    title: {
+      text: selectedCountry
+        ? `Top Product Groups - ${selectedCountry.name}`
+        : 'Top Product Groups',
+    },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow',
+      },
+    },
+    xAxis: {
+      type: 'category',
+      data: products.map((product) => product.productName),
+      axisLabel: {
+        rotate: 25,
+      },
+    },
+    yAxis: {
+      type: 'value',
+      name: 'Trade value',
+    },
+    series: [
+      {
+        data: products.map((product) => product.tradeValue),
         type: 'bar',
       },
     ],
@@ -153,9 +205,14 @@ function App() {
         <ReactECharts option={partnersChartOption} style={{ height: '400px' }} />
       </section>
 
-      <section>
-        <h2>Mock Trade Trend</h2>
+      <section style={{ marginBottom: '2rem' }}>
+        <h2>Mock Bilateral Trade Trend</h2>
         <ReactECharts option={trendChartOption} style={{ height: '400px' }} />
+      </section>
+
+      <section>
+        <h2>Mock Top Product Groups</h2>
+        <ReactECharts option={productsChartOption} style={{ height: '400px' }} />
       </section>
     </div>
   )

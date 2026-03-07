@@ -15,3 +15,6 @@
 - Use `echarts-for-react` as the React wrapper for Apache ECharts.
 - Allow local frontend origins in backend CORS configuration for development.
 - Use a mock trade trend chart before integrating real data sources.
+
+- Add `/api/trade/products` as a separate endpoint for product-group rankings rather than overloading existing trade endpoints.
+- Keep the frontend charts backend-driven, even for mock data, so the UI structure matches the future real-data architecture.

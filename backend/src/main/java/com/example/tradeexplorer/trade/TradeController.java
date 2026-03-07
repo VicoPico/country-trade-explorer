@@ -52,4 +52,85 @@ public class TradeController {
             );
         };
     }
+
+    @GetMapping("/api/trade/bilateral")
+    public List<Map<String, Object>> getBilateralTrend(
+            @RequestParam(defaultValue = "SWE") String reporter
+    ) {
+        return switch (reporter.toUpperCase()) {
+            case "USA" -> List.of(
+                    Map.of("year", "2021", "tradeValue", 620),
+                    Map.of("year", "2022", "tradeValue", 710),
+                    Map.of("year", "2023", "tradeValue", 690),
+                    Map.of("year", "2024", "tradeValue", 760)
+            );
+            case "CHN" -> List.of(
+                    Map.of("year", "2021", "tradeValue", 800),
+                    Map.of("year", "2022", "tradeValue", 860),
+                    Map.of("year", "2023", "tradeValue", 830),
+                    Map.of("year", "2024", "tradeValue", 910)
+            );
+            case "DEU" -> List.of(
+                    Map.of("year", "2021", "tradeValue", 420),
+                    Map.of("year", "2022", "tradeValue", 470),
+                    Map.of("year", "2023", "tradeValue", 455),
+                    Map.of("year", "2024", "tradeValue", 495)
+            );
+            case "SWE" -> List.of(
+                    Map.of("year", "2021", "tradeValue", 120),
+                    Map.of("year", "2022", "tradeValue", 200),
+                    Map.of("year", "2023", "tradeValue", 150),
+                    Map.of("year", "2024", "tradeValue", 280)
+            );
+            default -> List.of(
+                    Map.of("year", "2021", "tradeValue", 180),
+                    Map.of("year", "2022", "tradeValue", 220),
+                    Map.of("year", "2023", "tradeValue", 210),
+                    Map.of("year", "2024", "tradeValue", 260)
+            );
+        };
+    }
+
+    @GetMapping("/api/trade/products")
+    public List<Map<String, Object>> getTopProducts(
+            @RequestParam(defaultValue = "SWE") String reporter
+    ) {
+        return switch (reporter.toUpperCase()) {
+            case "USA" -> List.of(
+                    Map.of("productCode", "84", "productName", "Machinery", "tradeValue", 540),
+                    Map.of("productCode", "85", "productName", "Electrical equipment", "tradeValue", 510),
+                    Map.of("productCode", "87", "productName", "Vehicles", "tradeValue", 470),
+                    Map.of("productCode", "30", "productName", "Pharmaceuticals", "tradeValue", 320),
+                    Map.of("productCode", "88", "productName", "Aircraft", "tradeValue", 290)
+            );
+            case "CHN" -> List.of(
+                    Map.of("productCode", "85", "productName", "Electrical equipment", "tradeValue", 780),
+                    Map.of("productCode", "84", "productName", "Machinery", "tradeValue", 720),
+                    Map.of("productCode", "94", "productName", "Furniture", "tradeValue", 360),
+                    Map.of("productCode", "61", "productName", "Apparel, knit", "tradeValue", 310),
+                    Map.of("productCode", "39", "productName", "Plastics", "tradeValue", 280)
+            );
+            case "DEU" -> List.of(
+                    Map.of("productCode", "87", "productName", "Vehicles", "tradeValue", 520),
+                    Map.of("productCode", "84", "productName", "Machinery", "tradeValue", 500),
+                    Map.of("productCode", "30", "productName", "Pharmaceuticals", "tradeValue", 330),
+                    Map.of("productCode", "85", "productName", "Electrical equipment", "tradeValue", 310),
+                    Map.of("productCode", "90", "productName", "Optical instruments", "tradeValue", 250)
+            );
+            case "SWE" -> List.of(
+                    Map.of("productCode", "84", "productName", "Machinery", "tradeValue", 180),
+                    Map.of("productCode", "85", "productName", "Electrical equipment", "tradeValue", 165),
+                    Map.of("productCode", "87", "productName", "Vehicles", "tradeValue", 150),
+                    Map.of("productCode", "30", "productName", "Pharmaceuticals", "tradeValue", 140),
+                    Map.of("productCode", "44", "productName", "Wood", "tradeValue", 110)
+            );
+            default -> List.of(
+                    Map.of("productCode", "84", "productName", "Machinery", "tradeValue", 250),
+                    Map.of("productCode", "85", "productName", "Electrical equipment", "tradeValue", 220),
+                    Map.of("productCode", "87", "productName", "Vehicles", "tradeValue", 180),
+                    Map.of("productCode", "30", "productName", "Pharmaceuticals", "tradeValue", 140),
+                    Map.of("productCode", "39", "productName", "Plastics", "tradeValue", 120)
+            );
+        };
+    }
 }
