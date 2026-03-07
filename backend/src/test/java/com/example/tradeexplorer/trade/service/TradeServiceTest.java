@@ -3,37 +3,51 @@ package com.example.tradeexplorer.trade.service;
 import com.example.tradeexplorer.trade.dto.BilateralTradePointResponse;
 import com.example.tradeexplorer.trade.dto.ProductGroupResponse;
 import com.example.tradeexplorer.trade.dto.TradePartnerResponse;
+import com.example.tradeexplorer.trade.repository.PartnerTradeTotalView;
+import com.example.tradeexplorer.trade.repository.TradeObservationRepository;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class TradeServiceTest {
 
-    private final TradeService tradeService = new TradeService();
-
     @Test
-    void shouldReturnTopPartnersForSweden() {
+    void shouldReturnTopPartnersFromRepository() {
+        TradeObservationRepository repository = mock(TradeObservationRepository.class);
+        TradeService tradeService = new TradeService(repository);
+
+        PartnerTradeTotalView row1 = mock(PartnerTradeTotalView.class);
+        when(row1.getPartnerIso3()).thenReturn("DEU");
+        when(row1.getPartnerName()).thenReturn("Germany");
+        when(row1.getTotalTradeValue()).thenReturn(new BigDecimal("210.00"));
+
+        PartnerTradeTotalView row2 = mock(PartnerTradeTotalView.class);
+        when(row2.getPartnerIso3()).thenReturn("NOR");
+        when(row2.getPartnerName()).thenReturn("Norway");
+        when(row2.getTotalTradeValue()).thenReturn(new BigDecimal("190.00"));
+
+        when(repository.findTopPartnersByReporterYearAndFlow("SWE", 2024, "EXPORT"))
+                .thenReturn(List.of(row1, row2));
+
         List<TradePartnerResponse> partners = tradeService.getTopPartners("SWE");
 
-        assertNotNull(partners);
-        assertEquals(5, partners.size());
-        assertEquals("DEU", partners.getFirst().partnerCode());
-        assertEquals("Germany", partners.getFirst().partnerName());
-    }
+        assertEquals(2, partners.size());
+        assertEquals("DEU", partners.get(0).partnerCode());
+        assertEquals("Germany", partners.get(0).partnerName());
+        assertEquals(210, partners.get(0).tradeValue());
 
-    @Test
-    void shouldReturnDefaultTopPartnersForUnknownReporter() {
-        List<TradePartnerResponse> partners = tradeService.getTopPartners("XXX");
-
-        assertNotNull(partners);
-        assertEquals(5, partners.size());
-        assertEquals("USA", partners.getFirst().partnerCode());
+        verify(repository).findTopPartnersByReporterYearAndFlow("SWE", 2024, "EXPORT");
     }
 
     @Test
     void shouldReturnBilateralTrendForUsa() {
+        TradeObservationRepository repository = mock(TradeObservationRepository.class);
+        TradeService tradeService = new TradeService(repository);
+
         List<BilateralTradePointResponse> trend = tradeService.getBilateralTrend("USA");
 
         assertNotNull(trend);
@@ -44,6 +58,9 @@ class TradeServiceTest {
 
     @Test
     void shouldReturnProductGroupsForChina() {
+        TradeObservationRepository repository = mock(TradeObservationRepository.class);
+        TradeService tradeService = new TradeService(repository);
+
         List<ProductGroupResponse> products = tradeService.getTopProducts("CHN");
 
         assertNotNull(products);

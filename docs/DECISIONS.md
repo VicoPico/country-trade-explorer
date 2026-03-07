@@ -35,3 +35,11 @@
 - Use PostgreSQL in Docker as the default local database setup instead of relying on a host-installed PostgreSQL instance.
 - Introduce Spring Data JPA for the `country` table first, keeping the initial persistence step small and low-risk.
 - Configure Hibernate with `ddl-auto=validate` so Flyway remains the source of truth for schema management.
+
+- Use PostgreSQL in Docker as the only local database setup for this project.
+- Use host port `5434` for local Docker PostgreSQL to avoid collisions with other database services.
+- Use project-specific `CTE_DB_*` environment variables instead of generic `DB_*` names to avoid conflicts with other apps on the same machine.
+- Introduce Spring Data JPA for `country` first, then for `trade_observation`, keeping persistence adoption incremental.
+- Keep Flyway as the source of truth for schema management and use Hibernate with `ddl-auto=validate`.
+- Seed additional reference countries in a separate migration before inserting trade observations so foreign-key-dependent trade seeds apply in a valid order.
+- Switch only `/api/trade/partners` to database-backed reads first, while keeping bilateral trend and product-group endpoints mock-backed temporarily to reduce scope.
