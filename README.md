@@ -16,6 +16,7 @@ The user selects one country and can view:
 - Frontend: React + Vite
 - Charts: Apache ECharts
 - Database: PostgreSQL
+- Database migrations: Flyway
 - Main source: UN Comtrade
 
 ## Monorepo structure
@@ -86,3 +87,6 @@ mvn clean test
 - controllers now focus on HTTP handling and delegate business/data logic to services
 - backend service-layer unit tests added
 - backend controller smoke tests added
+- Flyway added for versioned PostgreSQL schema migrations
+- initial schema migration creates `country` and `trade_observation` tables
+- country seed migration added for local development
