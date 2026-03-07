@@ -24,3 +24,6 @@
 
 - Extract mock backend data from controllers into service classes to keep controllers focused on HTTP concerns.
 - Keep current mock data in services as an intermediate step before replacing it with repository- or source-backed integration logic.
+
+- Add backend unit tests at the service layer to verify mock data behavior without requiring full HTTP tests.
+- Add a lightweight controller smoke test with MockMvc to verify the main API endpoints respond successfully and preserve expected JSON structure.
