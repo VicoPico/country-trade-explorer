@@ -71,3 +71,5 @@ npm run dev
 - frontend top product groups chart tied to selected country
 - frontend API calls extracted into a dedicated client module
 - frontend UI split into smaller chart and selector components
+- backend API responses migrated from generic maps to typed DTO classes
+- frontend continues consuming the same JSON contract after backend DTO refactor

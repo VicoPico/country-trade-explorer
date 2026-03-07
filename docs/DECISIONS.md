@@ -18,3 +18,6 @@
 
 - Add `/api/trade/products` as a separate endpoint for product-group rankings rather than overloading existing trade endpoints.
 - Keep the frontend charts backend-driven, even for mock data, so the UI structure matches the future real-data architecture.
+
+- Replace generic `Map<String, Object>` API responses with typed DTO classes to improve backend type safety and refactorability.
+- Use Java records for API response DTOs because the current response shapes are simple, immutable, and read-oriented.

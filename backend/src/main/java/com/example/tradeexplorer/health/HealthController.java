@@ -1,20 +1,20 @@
 package com.example.tradeexplorer.health;
 
+import com.example.tradeexplorer.health.dto.HealthResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
-import java.util.Map;
 
 @RestController
 public class HealthController {
 
     @GetMapping("/api/health")
-    public Map<String, Object> health() {
-        return Map.of(
-                "status", "UP",
-                "service", "country-trade-explorer-backend",
-                "timestamp", Instant.now().toString()
+    public HealthResponse health() {
+        return new HealthResponse(
+                "UP",
+                "country-trade-explorer-backend",
+                Instant.now().toString()
         );
     }
 }
