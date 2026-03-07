@@ -24,6 +24,7 @@ public class TradeService {
                         "EXPORT"
                 )
                 .stream()
+                .limit(5)
                 .map(result -> new TradePartnerResponse(
                         result.getPartnerIso3(),
                         result.getPartnerName(),
@@ -46,42 +47,18 @@ public class TradeService {
     }
 
     public List<ProductGroupResponse> getTopProducts(String reporter) {
-        return switch (reporter.toUpperCase()) {
-            case "USA" -> List.of(
-                    new ProductGroupResponse("84", "Machinery", 540),
-                    new ProductGroupResponse("85", "Electrical equipment", 510),
-                    new ProductGroupResponse("87", "Vehicles", 470),
-                    new ProductGroupResponse("30", "Pharmaceuticals", 320),
-                    new ProductGroupResponse("88", "Aircraft", 290)
-            );
-            case "CHN" -> List.of(
-                    new ProductGroupResponse("85", "Electrical equipment", 780),
-                    new ProductGroupResponse("84", "Machinery", 720),
-                    new ProductGroupResponse("94", "Furniture", 360),
-                    new ProductGroupResponse("61", "Apparel, knit", 310),
-                    new ProductGroupResponse("39", "Plastics", 280)
-            );
-            case "DEU" -> List.of(
-                    new ProductGroupResponse("87", "Vehicles", 520),
-                    new ProductGroupResponse("84", "Machinery", 500),
-                    new ProductGroupResponse("30", "Pharmaceuticals", 330),
-                    new ProductGroupResponse("85", "Electrical equipment", 310),
-                    new ProductGroupResponse("90", "Optical instruments", 250)
-            );
-            case "SWE" -> List.of(
-                    new ProductGroupResponse("84", "Machinery", 180),
-                    new ProductGroupResponse("85", "Electrical equipment", 165),
-                    new ProductGroupResponse("87", "Vehicles", 150),
-                    new ProductGroupResponse("30", "Pharmaceuticals", 140),
-                    new ProductGroupResponse("44", "Wood", 110)
-            );
-            default -> List.of(
-                    new ProductGroupResponse("84", "Machinery", 250),
-                    new ProductGroupResponse("85", "Electrical equipment", 220),
-                    new ProductGroupResponse("87", "Vehicles", 180),
-                    new ProductGroupResponse("30", "Pharmaceuticals", 140),
-                    new ProductGroupResponse("39", "Plastics", 120)
-            );
-        };
+        return tradeObservationRepository.findTopProductsByReporterYearAndFlow(
+                        reporter,
+                        2024,
+                        "EXPORT"
+                )
+                .stream()
+                .limit(5)
+                .map(result -> new ProductGroupResponse(
+                        result.getProductCode(),
+                        result.getProductName(),
+                        result.getTotalTradeValue().intValue()
+                ))
+                .toList();
     }
 }
