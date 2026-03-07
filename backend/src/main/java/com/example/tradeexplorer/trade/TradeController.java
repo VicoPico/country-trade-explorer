@@ -21,22 +21,27 @@ public class TradeController {
 
     @GetMapping("/api/trade/partners")
     public List<TradePartnerResponse> getTopPartners(
-            @RequestParam(defaultValue = "SWE") String reporter
+            @RequestParam(defaultValue = "SWE") String reporter,
+            @RequestParam(defaultValue = "2024") Integer year,
+            @RequestParam(defaultValue = "EXPORT") String flow
     ) {
-        return tradeService.getTopPartners(reporter);
+        return tradeService.getTopPartners(reporter, year, flow);
     }
 
     @GetMapping("/api/trade/bilateral")
     public List<BilateralTradePointResponse> getBilateralTrend(
-            @RequestParam(defaultValue = "SWE") String reporter
+            @RequestParam(defaultValue = "SWE") String reporter,
+            @RequestParam(defaultValue = "EXPORT") String flow
     ) {
-        return tradeService.getBilateralTrend(reporter);
+        return tradeService.getBilateralTrend(reporter, flow);
     }
 
     @GetMapping("/api/trade/products")
     public List<ProductGroupResponse> getTopProducts(
-            @RequestParam(defaultValue = "SWE") String reporter
+            @RequestParam(defaultValue = "SWE") String reporter,
+            @RequestParam(defaultValue = "2024") Integer year,
+            @RequestParam(defaultValue = "EXPORT") String flow
     ) {
-        return tradeService.getTopProducts(reporter);
+        return tradeService.getTopProducts(reporter, year, flow);
     }
 }

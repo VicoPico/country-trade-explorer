@@ -18,14 +18,31 @@ export function fetchCountries() {
   return fetchJson('/api/countries')
 }
 
-export function fetchTopPartners(reporter) {
-  return fetchJson(`/api/trade/partners?reporter=${encodeURIComponent(reporter)}`)
+export function fetchTopPartners(reporter, year, flow) {
+  const params = new URLSearchParams({
+    reporter,
+    year: String(year),
+    flow,
+  })
+
+  return fetchJson(`/api/trade/partners?${params.toString()}`)
 }
 
-export function fetchBilateralTrend(reporter) {
-  return fetchJson(`/api/trade/bilateral?reporter=${encodeURIComponent(reporter)}`)
+export function fetchBilateralTrend(reporter, flow) {
+  const params = new URLSearchParams({
+    reporter,
+    flow,
+  })
+
+  return fetchJson(`/api/trade/bilateral?${params.toString()}`)
 }
 
-export function fetchTopProducts(reporter) {
-  return fetchJson(`/api/trade/products?reporter=${encodeURIComponent(reporter)}`)
+export function fetchTopProducts(reporter, year, flow) {
+  const params = new URLSearchParams({
+    reporter,
+    year: String(year),
+    flow,
+  })
+
+  return fetchJson(`/api/trade/products?${params.toString()}`)
 }

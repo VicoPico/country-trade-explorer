@@ -17,11 +17,11 @@ public class TradeService {
         this.tradeObservationRepository = tradeObservationRepository;
     }
 
-    public List<TradePartnerResponse> getTopPartners(String reporter) {
+    public List<TradePartnerResponse> getTopPartners(String reporter, Integer year, String flow) {
         return tradeObservationRepository.findTopPartnersByReporterYearAndFlow(
                         reporter,
-                        2024,
-                        "EXPORT"
+                        year,
+                        flow
                 )
                 .stream()
                 .limit(5)
@@ -33,10 +33,10 @@ public class TradeService {
                 .toList();
     }
 
-    public List<BilateralTradePointResponse> getBilateralTrend(String reporter) {
+    public List<BilateralTradePointResponse> getBilateralTrend(String reporter, String flow) {
         return tradeObservationRepository.findYearlyTotalsByReporterAndFlow(
                         reporter,
-                        "EXPORT"
+                        flow
                 )
                 .stream()
                 .map(result -> new BilateralTradePointResponse(
@@ -46,11 +46,11 @@ public class TradeService {
                 .toList();
     }
 
-    public List<ProductGroupResponse> getTopProducts(String reporter) {
+    public List<ProductGroupResponse> getTopProducts(String reporter, Integer year, String flow) {
         return tradeObservationRepository.findTopProductsByReporterYearAndFlow(
                         reporter,
-                        2024,
-                        "EXPORT"
+                        year,
+                        flow
                 )
                 .stream()
                 .limit(5)

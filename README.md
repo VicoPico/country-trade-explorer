@@ -74,11 +74,11 @@ CTE_DB_HOST=localhost CTE_DB_PORT=5434 CTE_DB_NAME=trade_explorer CTE_DB_USER=po
 - `/api/countries` reads country data from PostgreSQL via Spring Data JPA
 - frontend country dropdown wired to backend country data
 - `/api/trade/partners` reads the top 5 partner totals from seeded PostgreSQL trade observations
-- frontend top trading partners chart tied to selected country
 - `/api/trade/bilateral` reads yearly trade aggregates from seeded PostgreSQL trade observations
-- frontend bilateral trade trend chart fetched from backend
 - `/api/trade/products` reads the top 5 product-group aggregates from seeded PostgreSQL trade observations
-- frontend top product groups chart tied to selected country
+- frontend top trading partners, bilateral trend, and top product groups charts are all DB-backed
+- year and flow request parameters added to trade endpoints
+- frontend year and flow filters wired to backend trade queries
 - frontend API calls extracted into a dedicated client module
 - frontend UI split into smaller chart and selector components
 - backend API responses migrated from generic maps to typed DTO classes

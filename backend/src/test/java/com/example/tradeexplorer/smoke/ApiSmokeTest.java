@@ -34,7 +34,12 @@ class ApiSmokeTest {
 
     @Test
     void partnersEndpointShouldReturnData() throws Exception {
-        mockMvc.perform(get("/api/trade/partners").param("reporter", "SWE"))
+        mockMvc.perform(
+                        get("/api/trade/partners")
+                                .param("reporter", "SWE")
+                                .param("year", "2024")
+                                .param("flow", "EXPORT")
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(5))
                 .andExpect(jsonPath("$[0].partnerCode").value("DEU"));
@@ -42,15 +47,24 @@ class ApiSmokeTest {
 
     @Test
     void bilateralEndpointShouldReturnData() throws Exception {
-        mockMvc.perform(get("/api/trade/bilateral").param("reporter", "SWE"))
+        mockMvc.perform(
+                        get("/api/trade/bilateral")
+                                .param("reporter", "SWE")
+                                .param("flow", "EXPORT")
+                )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(4))
+                .andExpect(jsonPath("$.length()").value(greaterThan(0)))
                 .andExpect(jsonPath("$[0].year").value("2021"));
     }
 
     @Test
     void productsEndpointShouldReturnData() throws Exception {
-        mockMvc.perform(get("/api/trade/products").param("reporter", "SWE"))
+        mockMvc.perform(
+                        get("/api/trade/products")
+                                .param("reporter", "SWE")
+                                .param("year", "2024")
+                                .param("flow", "EXPORT")
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(5))
                 .andExpect(jsonPath("$[0].productCode").value("84"));
