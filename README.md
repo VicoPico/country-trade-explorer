@@ -73,9 +73,9 @@ CTE_DB_HOST=localhost CTE_DB_PORT=5434 CTE_DB_NAME=trade_explorer CTE_DB_USER=po
 - CORS enabled for local frontend development
 - `/api/countries` reads country data from PostgreSQL via Spring Data JPA
 - frontend country dropdown wired to backend country data
-- `/api/trade/partners` now reads top partner totals from seeded PostgreSQL trade observations
+- `/api/trade/partners` reads top partner totals from seeded PostgreSQL trade observations
 - frontend top trading partners chart tied to selected country
-- mock backend bilateral trade trend endpoint at `/api/trade/bilateral`
+- `/api/trade/bilateral` reads yearly trade aggregates from seeded PostgreSQL trade observations
 - frontend bilateral trade trend chart fetched from backend
 - mock backend top product groups endpoint at `/api/trade/products`
 - frontend top product groups chart tied to selected country
@@ -91,6 +91,7 @@ CTE_DB_HOST=localhost CTE_DB_PORT=5434 CTE_DB_NAME=trade_explorer CTE_DB_USER=po
 - base country seed migration added for local development
 - additional country seed migration added to support partner foreign keys
 - trade observation seed migration added for local development
+- trade observation historical seed migration added for trend queries
 - Spring Data JPA introduced for `country` and `trade_observation`
 - local database setup uses Docker PostgreSQL on host port `5434`
 - project-specific `CTE_DB_*` environment variables avoid conflicts with other apps

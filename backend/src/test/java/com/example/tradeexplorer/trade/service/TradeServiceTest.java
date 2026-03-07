@@ -5,6 +5,7 @@ import com.example.tradeexplorer.trade.dto.ProductGroupResponse;
 import com.example.tradeexplorer.trade.dto.TradePartnerResponse;
 import com.example.tradeexplorer.trade.repository.PartnerTradeTotalView;
 import com.example.tradeexplorer.trade.repository.TradeObservationRepository;
+import com.example.tradeexplorer.trade.repository.YearlyTradeTotalView;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -44,16 +45,29 @@ class TradeServiceTest {
     }
 
     @Test
-    void shouldReturnBilateralTrendForUsa() {
+    void shouldReturnBilateralTrendFromRepository() {
         TradeObservationRepository repository = mock(TradeObservationRepository.class);
         TradeService tradeService = new TradeService(repository);
 
-        List<BilateralTradePointResponse> trend = tradeService.getBilateralTrend("USA");
+        YearlyTradeTotalView year1 = mock(YearlyTradeTotalView.class);
+        when(year1.getPeriodYear()).thenReturn(2021);
+        when(year1.getTotalTradeValue()).thenReturn(new BigDecimal("120.00"));
 
-        assertNotNull(trend);
-        assertEquals(4, trend.size());
-        assertEquals("2021", trend.getFirst().year());
-        assertEquals(620, trend.getFirst().tradeValue());
+        YearlyTradeTotalView year2 = mock(YearlyTradeTotalView.class);
+        when(year2.getPeriodYear()).thenReturn(2022);
+        when(year2.getTotalTradeValue()).thenReturn(new BigDecimal("200.00"));
+
+        when(repository.findYearlyTotalsByReporterAndFlow("SWE", "EXPORT"))
+                .thenReturn(List.of(year1, year2));
+
+        List<BilateralTradePointResponse> trend = tradeService.getBilateralTrend("SWE");
+
+        assertEquals(2, trend.size());
+        assertEquals("2021", trend.get(0).year());
+        assertEquals(120, trend.get(0).tradeValue());
+        assertEquals("2022", trend.get(1).year());
+
+        verify(repository).findYearlyTotalsByReporterAndFlow("SWE", "EXPORT");
     }
 
     @Test
