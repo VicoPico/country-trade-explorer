@@ -1,6 +1,8 @@
 import ReactECharts from 'echarts-for-react'
 
-function PartnersChart({ selectedCountry, partners }) {
+function PartnersChart({ selectedCountry, partners, loading }) {
+  const hasData = partners.length > 0
+
   const chartOption = {
     title: {
       text: selectedCountry
@@ -34,8 +36,15 @@ function PartnersChart({ selectedCountry, partners }) {
 
   return (
     <section style={{ marginBottom: '2rem' }}>
-      <h2>Mock Top Trading Partners</h2>
-      <ReactECharts option={chartOption} style={{ height: '400px' }} />
+      <h2>Top Trading Partners</h2>
+
+      {loading ? (
+        <p>Loading top trading partners...</p>
+      ) : hasData ? (
+        <ReactECharts option={chartOption} style={{ height: '400px' }} />
+      ) : (
+        <p>No partner data available for the selected filters.</p>
+      )}
     </section>
   )
 }

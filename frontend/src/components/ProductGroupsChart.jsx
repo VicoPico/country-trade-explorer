@@ -1,6 +1,8 @@
 import ReactECharts from 'echarts-for-react'
 
-function ProductGroupsChart({ selectedCountry, products }) {
+function ProductGroupsChart({ selectedCountry, products, loading }) {
+  const hasData = products.length > 0
+
   const chartOption = {
     title: {
       text: selectedCountry
@@ -34,8 +36,15 @@ function ProductGroupsChart({ selectedCountry, products }) {
 
   return (
     <section>
-      <h2>Mock Top Product Groups</h2>
-      <ReactECharts option={chartOption} style={{ height: '400px' }} />
+      <h2>Top Product Groups</h2>
+
+      {loading ? (
+        <p>Loading top product groups...</p>
+      ) : hasData ? (
+        <ReactECharts option={chartOption} style={{ height: '400px' }} />
+      ) : (
+        <p>No product-group data available for the selected filters.</p>
+      )}
     </section>
   )
 }
