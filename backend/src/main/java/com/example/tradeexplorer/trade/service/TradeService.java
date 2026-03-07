@@ -33,38 +33,16 @@ public class TradeService {
     }
 
     public List<BilateralTradePointResponse> getBilateralTrend(String reporter) {
-        return switch (reporter.toUpperCase()) {
-            case "USA" -> List.of(
-                    new BilateralTradePointResponse("2021", 620),
-                    new BilateralTradePointResponse("2022", 710),
-                    new BilateralTradePointResponse("2023", 690),
-                    new BilateralTradePointResponse("2024", 760)
-            );
-            case "CHN" -> List.of(
-                    new BilateralTradePointResponse("2021", 800),
-                    new BilateralTradePointResponse("2022", 860),
-                    new BilateralTradePointResponse("2023", 830),
-                    new BilateralTradePointResponse("2024", 910)
-            );
-            case "DEU" -> List.of(
-                    new BilateralTradePointResponse("2021", 420),
-                    new BilateralTradePointResponse("2022", 470),
-                    new BilateralTradePointResponse("2023", 455),
-                    new BilateralTradePointResponse("2024", 495)
-            );
-            case "SWE" -> List.of(
-                    new BilateralTradePointResponse("2021", 120),
-                    new BilateralTradePointResponse("2022", 200),
-                    new BilateralTradePointResponse("2023", 150),
-                    new BilateralTradePointResponse("2024", 280)
-            );
-            default -> List.of(
-                    new BilateralTradePointResponse("2021", 180),
-                    new BilateralTradePointResponse("2022", 220),
-                    new BilateralTradePointResponse("2023", 210),
-                    new BilateralTradePointResponse("2024", 260)
-            );
-        };
+        return tradeObservationRepository.findYearlyTotalsByReporterAndFlow(
+                        reporter,
+                        "EXPORT"
+                )
+                .stream()
+                .map(result -> new BilateralTradePointResponse(
+                        String.valueOf(result.getPeriodYear()),
+                        result.getTotalTradeValue().intValue()
+                ))
+                .toList();
     }
 
     public List<ProductGroupResponse> getTopProducts(String reporter) {

@@ -28,4 +28,19 @@ public interface TradeObservationRepository extends JpaRepository<TradeObservati
             @Param("periodYear") Integer periodYear,
             @Param("flow") String flow
     );
+
+    @Query(value = """
+        SELECT
+            t.period_year AS periodYear,
+            SUM(t.trade_value) AS totalTradeValue
+        FROM trade_observation t
+        WHERE UPPER(t.reporter_iso3) = UPPER(:reporterIso3)
+          AND UPPER(t.flow) = UPPER(:flow)
+        GROUP BY t.period_year
+        ORDER BY t.period_year
+        """, nativeQuery = true)
+    List<YearlyTradeTotalView> findYearlyTotalsByReporterAndFlow(
+            @Param("reporterIso3") String reporterIso3,
+            @Param("flow") String flow
+    );
 }

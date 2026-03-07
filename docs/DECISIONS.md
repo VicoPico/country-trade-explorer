@@ -16,6 +16,8 @@
 - Allow local frontend origins in backend CORS configuration for development.
 - Use a mock trade trend chart before integrating real data sources.
 
+## 2026-03-07
+
 - Add `/api/trade/products` as a separate endpoint for product-group rankings rather than overloading existing trade endpoints.
 - Keep the frontend charts backend-driven, even for mock data, so the UI structure matches the future real-data architecture.
 
@@ -43,3 +45,7 @@
 - Keep Flyway as the source of truth for schema management and use Hibernate with `ddl-auto=validate`.
 - Seed additional reference countries in a separate migration before inserting trade observations so foreign-key-dependent trade seeds apply in a valid order.
 - Switch only `/api/trade/partners` to database-backed reads first, while keeping bilateral trend and product-group endpoints mock-backed temporarily to reduce scope.
+
+- Switch `/api/trade/bilateral` to database-backed yearly aggregates after `/api/trade/partners` so persistence adoption stays incremental.
+- Seed historical trade observations for 2021-2023 in a dedicated migration to support trend charts without introducing external ingestion yet.
+- Keep `/api/trade/products` mock-backed temporarily while partner and bilateral queries are transitioned to repository-backed reads first.
