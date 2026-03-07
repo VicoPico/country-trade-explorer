@@ -79,6 +79,7 @@ CTE_DB_HOST=localhost CTE_DB_PORT=5434 CTE_DB_NAME=trade_explorer CTE_DB_USER=po
 - frontend top trading partners, bilateral trend, and top product groups charts are all DB-backed
 - year and flow request parameters added to trade endpoints
 - frontend year and flow filters wired to backend trade queries
+- import seed data added so both EXPORT and IMPORT flows return meaningful chart data
 - frontend API calls extracted into a dedicated client module
 - frontend UI split into smaller chart and selector components
 - backend API responses migrated from generic maps to typed DTO classes
@@ -92,6 +93,7 @@ CTE_DB_HOST=localhost CTE_DB_PORT=5434 CTE_DB_NAME=trade_explorer CTE_DB_USER=po
 - additional country seed migration added to support partner foreign keys
 - trade observation seed migration added for local development
 - trade observation historical seed migration added for trend queries
+- trade observation import seed migration added for flow filter support
 - Spring Data JPA introduced for `country` and `trade_observation`
 - local database setup uses Docker PostgreSQL on host port `5434`
 - project-specific `CTE_DB_*` environment variables avoid conflicts with other apps

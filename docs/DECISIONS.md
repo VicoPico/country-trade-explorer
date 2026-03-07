@@ -57,3 +57,6 @@
 - Add `year` and `flow` request parameters to trade endpoints before introducing more complex filtering so the API stays aligned with likely real-data query dimensions.
 - Wire frontend year and flow selectors directly to backend-backed trade queries, even though current seed data is stronger for exports than imports.
 - Allow empty results for unsupported filter combinations in the current seed dataset rather than adding UI-only fallback behavior.
+
+- Seed a small set of IMPORT trade observations after introducing the flow filter so both flow directions return meaningful data in the MVP UI.
+- Keep import seed coverage intentionally narrow and focused on the main demo countries (SWE, USA, CHN) rather than attempting broad reference completeness at this stage.
