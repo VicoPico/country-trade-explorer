@@ -3,6 +3,7 @@ package com.example.tradeexplorer.trade.service;
 import com.example.tradeexplorer.trade.dto.BilateralTradePointResponse;
 import com.example.tradeexplorer.trade.dto.ProductGroupResponse;
 import com.example.tradeexplorer.trade.dto.TradePartnerResponse;
+import com.example.tradeexplorer.trade.repository.TradeObservationRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,44 +11,25 @@ import java.util.List;
 @Service
 public class TradeService {
 
+    private final TradeObservationRepository tradeObservationRepository;
+
+    public TradeService(TradeObservationRepository tradeObservationRepository) {
+        this.tradeObservationRepository = tradeObservationRepository;
+    }
+
     public List<TradePartnerResponse> getTopPartners(String reporter) {
-        return switch (reporter.toUpperCase()) {
-            case "USA" -> List.of(
-                    new TradePartnerResponse("CAN", "Canada", 820),
-                    new TradePartnerResponse("MEX", "Mexico", 760),
-                    new TradePartnerResponse("CHN", "China", 680),
-                    new TradePartnerResponse("DEU", "Germany", 410),
-                    new TradePartnerResponse("JPN", "Japan", 320)
-            );
-            case "CHN" -> List.of(
-                    new TradePartnerResponse("USA", "United States", 910),
-                    new TradePartnerResponse("KOR", "South Korea", 540),
-                    new TradePartnerResponse("JPN", "Japan", 500),
-                    new TradePartnerResponse("DEU", "Germany", 330),
-                    new TradePartnerResponse("AUS", "Australia", 290)
-            );
-            case "DEU" -> List.of(
-                    new TradePartnerResponse("FRA", "France", 390),
-                    new TradePartnerResponse("NLD", "Netherlands", 370),
-                    new TradePartnerResponse("USA", "United States", 350),
-                    new TradePartnerResponse("CHN", "China", 340),
-                    new TradePartnerResponse("POL", "Poland", 260)
-            );
-            case "SWE" -> List.of(
-                    new TradePartnerResponse("DEU", "Germany", 210),
-                    new TradePartnerResponse("NOR", "Norway", 190),
-                    new TradePartnerResponse("USA", "United States", 175),
-                    new TradePartnerResponse("DNK", "Denmark", 160),
-                    new TradePartnerResponse("FIN", "Finland", 145)
-            );
-            default -> List.of(
-                    new TradePartnerResponse("USA", "United States", 300),
-                    new TradePartnerResponse("CHN", "China", 250),
-                    new TradePartnerResponse("DEU", "Germany", 200),
-                    new TradePartnerResponse("JPN", "Japan", 150),
-                    new TradePartnerResponse("FRA", "France", 120)
-            );
-        };
+        return tradeObservationRepository.findTopPartnersByReporterYearAndFlow(
+                        reporter,
+                        2024,
+                        "EXPORT"
+                )
+                .stream()
+                .map(result -> new TradePartnerResponse(
+                        result.getPartnerIso3(),
+                        result.getPartnerName(),
+                        result.getTotalTradeValue().intValue()
+                ))
+                .toList();
     }
 
     public List<BilateralTradePointResponse> getBilateralTrend(String reporter) {
