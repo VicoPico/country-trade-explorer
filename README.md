@@ -56,6 +56,15 @@ cd frontend
 npm run dev
 ```
 
+## Testing
+
+### Backend tests
+
+```bash
+cd backend
+mvn clean test
+```
+
 ## Current implemented step
 
 - backend health endpoint at `/api/health`
@@ -75,3 +84,5 @@ npm run dev
 - frontend continues consuming the same JSON contract after backend DTO refactor
 - backend mock data extracted from controllers into service classes
 - controllers now focus on HTTP handling and delegate business/data logic to services
+- backend service-layer unit tests added
+- backend controller smoke tests added
