@@ -43,4 +43,24 @@ public interface TradeObservationRepository extends JpaRepository<TradeObservati
             @Param("reporterIso3") String reporterIso3,
             @Param("flow") String flow
     );
+
+    @Query(value = """
+        SELECT
+            t.product_code AS productCode,
+            t.product_name AS productName,
+            SUM(t.trade_value) AS totalTradeValue
+        FROM trade_observation t
+        WHERE UPPER(t.reporter_iso3) = UPPER(:reporterIso3)
+          AND t.period_year = :periodYear
+          AND UPPER(t.flow) = UPPER(:flow)
+          AND t.product_code IS NOT NULL
+          AND t.product_name IS NOT NULL
+        GROUP BY t.product_code, t.product_name
+        ORDER BY SUM(t.trade_value) DESC
+        """, nativeQuery = true)
+    List<ProductTradeTotalView> findTopProductsByReporterYearAndFlow(
+            @Param("reporterIso3") String reporterIso3,
+            @Param("periodYear") Integer periodYear,
+            @Param("flow") String flow
+    );
 }

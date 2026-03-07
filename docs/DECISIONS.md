@@ -49,3 +49,7 @@
 - Switch `/api/trade/bilateral` to database-backed yearly aggregates after `/api/trade/partners` so persistence adoption stays incremental.
 - Seed historical trade observations for 2021-2023 in a dedicated migration to support trend charts without introducing external ingestion yet.
 - Keep `/api/trade/products` mock-backed temporarily while partner and bilateral queries are transitioned to repository-backed reads first.
+
+- Switch `/api/trade/products` to database-backed product-group aggregates after partners and bilateral trends so all three core views share the same persistence-backed architecture.
+- Limit top-partners and top-products responses to 5 rows at the service layer to preserve a stable MVP API shape and match the current UI scope.
+- Keep product aggregation at the reporter/year/flow level for now, without partner filtering, to stay aligned with the current MVP UI scope.

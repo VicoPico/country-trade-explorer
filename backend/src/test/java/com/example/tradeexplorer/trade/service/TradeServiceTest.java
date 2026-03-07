@@ -4,6 +4,7 @@ import com.example.tradeexplorer.trade.dto.BilateralTradePointResponse;
 import com.example.tradeexplorer.trade.dto.ProductGroupResponse;
 import com.example.tradeexplorer.trade.dto.TradePartnerResponse;
 import com.example.tradeexplorer.trade.repository.PartnerTradeTotalView;
+import com.example.tradeexplorer.trade.repository.ProductTradeTotalView;
 import com.example.tradeexplorer.trade.repository.TradeObservationRepository;
 import com.example.tradeexplorer.trade.repository.YearlyTradeTotalView;
 import org.junit.jupiter.api.Test;
@@ -71,15 +72,30 @@ class TradeServiceTest {
     }
 
     @Test
-    void shouldReturnProductGroupsForChina() {
+    void shouldReturnTopProductsFromRepository() {
         TradeObservationRepository repository = mock(TradeObservationRepository.class);
         TradeService tradeService = new TradeService(repository);
 
-        List<ProductGroupResponse> products = tradeService.getTopProducts("CHN");
+        ProductTradeTotalView row1 = mock(ProductTradeTotalView.class);
+        when(row1.getProductCode()).thenReturn("84");
+        when(row1.getProductName()).thenReturn("Machinery");
+        when(row1.getTotalTradeValue()).thenReturn(new BigDecimal("180.00"));
 
-        assertNotNull(products);
-        assertEquals(5, products.size());
-        assertEquals("85", products.getFirst().productCode());
-        assertEquals("Electrical equipment", products.getFirst().productName());
+        ProductTradeTotalView row2 = mock(ProductTradeTotalView.class);
+        when(row2.getProductCode()).thenReturn("85");
+        when(row2.getProductName()).thenReturn("Electrical equipment");
+        when(row2.getTotalTradeValue()).thenReturn(new BigDecimal("165.00"));
+
+        when(repository.findTopProductsByReporterYearAndFlow("SWE", 2024, "EXPORT"))
+                .thenReturn(List.of(row1, row2));
+
+        List<ProductGroupResponse> products = tradeService.getTopProducts("SWE");
+
+        assertEquals(2, products.size());
+        assertEquals("84", products.get(0).productCode());
+        assertEquals("Machinery", products.get(0).productName());
+        assertEquals(180, products.get(0).tradeValue());
+
+        verify(repository).findTopProductsByReporterYearAndFlow("SWE", 2024, "EXPORT");
     }
 }
