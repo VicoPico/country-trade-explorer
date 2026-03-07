@@ -63,3 +63,6 @@
 
 - Add basic loading and empty-state messaging in chart components so backend-backed filter changes feel explicit and less abrupt.
 - Prefer simple textual loading and empty states over more complex skeleton or overlay patterns at the current MVP stage.
+
+- Replace most inline frontend styling with a small shared CSS structure once the main UI sections are stable enough to benefit from consistent layout classes.
+- Keep frontend styling lightweight and file-local (`App.css`) rather than introducing a larger styling framework at the current MVP stage.

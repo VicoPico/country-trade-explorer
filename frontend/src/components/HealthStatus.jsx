@@ -1,11 +1,11 @@
 function HealthStatus({ health }) {
   return (
-    <section style={{ marginBottom: '2rem' }}>
+    <section className="panel">
       <h2>Backend Health</h2>
       {health ? (
-        <pre>{JSON.stringify(health, null, 2)}</pre>
+        <pre className="status-pre">{JSON.stringify(health, null, 2)}</pre>
       ) : (
-        <p>Loading backend status...</p>
+        <p className="helper-text">Loading backend status...</p>
       )}
     </section>
   )

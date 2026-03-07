@@ -35,15 +35,17 @@ function PartnersChart({ selectedCountry, partners, loading }) {
   }
 
   return (
-    <section style={{ marginBottom: '2rem' }}>
+    <section className="panel">
       <h2>Top Trading Partners</h2>
 
       {loading ? (
-        <p>Loading top trading partners...</p>
+        <p className="helper-text">Loading top trading partners...</p>
       ) : hasData ? (
-        <ReactECharts option={chartOption} style={{ height: '400px' }} />
+        <div className="chart-container">
+          <ReactECharts option={chartOption} style={{ height: '400px' }} />
+        </div>
       ) : (
-        <p>No partner data available for the selected filters.</p>
+        <p className="helper-text">No partner data available for the selected filters.</p>
       )}
     </section>
   )

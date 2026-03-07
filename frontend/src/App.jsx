@@ -87,15 +87,8 @@ function App() {
   )
 
   return (
-    <div
-      style={{
-        padding: '2rem',
-        fontFamily: 'Arial, sans-serif',
-        maxWidth: '1100px',
-        margin: '0 auto',
-      }}
-    >
-      <h1>Country Trade Explorer</h1>
+    <div className="app-shell">
+      <h1 className="app-title">Country Trade Explorer</h1>
 
       <HealthStatus health={health} />
 
