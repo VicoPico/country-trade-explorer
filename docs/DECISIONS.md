@@ -27,3 +27,7 @@
 
 - Add backend unit tests at the service layer to verify mock data behavior without requiring full HTTP tests.
 - Add a lightweight controller smoke test with MockMvc to verify the main API endpoints respond successfully and preserve expected JSON structure.
+
+- Use Flyway for versioned PostgreSQL schema migrations so database structure evolves through tracked code changes.
+- Introduce an initial relational schema with a `country` reference table and a `trade_observation` table as the first persistence foundation.
+- Seed a small set of countries through a migration to support local development before repository-backed loading is implemented.

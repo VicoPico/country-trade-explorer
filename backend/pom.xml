@@ -20,6 +20,7 @@
 
     <properties>
         <java.version>21</java.version>
+        <start-class>com.example.tradeexplorer.TradeExplorerApplication</start-class>
     </properties>
 
     <dependencies>
@@ -36,6 +37,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
         </dependency>
 
         <dependency>
