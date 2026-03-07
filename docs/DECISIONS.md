@@ -21,3 +21,6 @@
 
 - Replace generic `Map<String, Object>` API responses with typed DTO classes to improve backend type safety and refactorability.
 - Use Java records for API response DTOs because the current response shapes are simple, immutable, and read-oriented.
+
+- Extract mock backend data from controllers into service classes to keep controllers focused on HTTP concerns.
+- Keep current mock data in services as an intermediate step before replacing it with repository- or source-backed integration logic.

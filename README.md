@@ -73,3 +73,5 @@ npm run dev
 - frontend UI split into smaller chart and selector components
 - backend API responses migrated from generic maps to typed DTO classes
 - frontend continues consuming the same JSON contract after backend DTO refactor
+- backend mock data extracted from controllers into service classes
+- controllers now focus on HTTP handling and delegate business/data logic to services
