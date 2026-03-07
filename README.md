@@ -69,3 +69,5 @@ npm run dev
 - frontend bilateral trade trend chart fetched from backend
 - mock backend top product groups endpoint at `/api/trade/products`
 - frontend top product groups chart tied to selected country
+- frontend API calls extracted into a dedicated client module
+- frontend UI split into smaller chart and selector components
