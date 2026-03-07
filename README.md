@@ -60,9 +60,12 @@ npm run dev
 
 - backend health endpoint at `/api/health`
 - frontend connectivity test to backend API
-- initial Apache ECharts mock line chart
 - CORS enabled for local frontend development
 - mock backend countries endpoint at `/api/countries`
 - frontend country dropdown wired to backend country data
 - mock backend top trading partners endpoint at `/api/trade/partners`
 - frontend top trading partners chart tied to selected country
+- mock backend bilateral trade trend endpoint at `/api/trade/bilateral`
+- frontend bilateral trade trend chart fetched from backend
+- mock backend top product groups endpoint at `/api/trade/products`
+- frontend top product groups chart tied to selected country
