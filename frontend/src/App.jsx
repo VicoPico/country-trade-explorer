@@ -20,9 +20,14 @@ function App() {
   const [selectedCountryCode, setSelectedCountryCode] = useState('')
   const [selectedYear, setSelectedYear] = useState(2024)
   const [selectedFlow, setSelectedFlow] = useState('EXPORT')
+
   const [partners, setPartners] = useState([])
   const [trendData, setTrendData] = useState([])
   const [products, setProducts] = useState([])
+
+  const [partnersLoading, setPartnersLoading] = useState(false)
+  const [trendLoading, setTrendLoading] = useState(false)
+  const [productsLoading, setProductsLoading] = useState(false)
 
   useEffect(() => {
     fetchHealth()
@@ -49,25 +54,31 @@ function App() {
   useEffect(() => {
     if (!selectedCountryCode) return
 
+    setPartnersLoading(true)
     fetchTopPartners(selectedCountryCode, selectedYear, selectedFlow)
       .then((data) => setPartners(data))
       .catch(() => setPartners([]))
+      .finally(() => setPartnersLoading(false))
   }, [selectedCountryCode, selectedYear, selectedFlow])
 
   useEffect(() => {
     if (!selectedCountryCode) return
 
+    setTrendLoading(true)
     fetchBilateralTrend(selectedCountryCode, selectedFlow)
       .then((data) => setTrendData(data))
       .catch(() => setTrendData([]))
+      .finally(() => setTrendLoading(false))
   }, [selectedCountryCode, selectedFlow])
 
   useEffect(() => {
     if (!selectedCountryCode) return
 
+    setProductsLoading(true)
     fetchTopProducts(selectedCountryCode, selectedYear, selectedFlow)
       .then((data) => setProducts(data))
       .catch(() => setProducts([]))
+      .finally(() => setProductsLoading(false))
   }, [selectedCountryCode, selectedYear, selectedFlow])
 
   const selectedCountry = useMemo(
@@ -105,16 +116,19 @@ function App() {
       <PartnersChart
         selectedCountry={selectedCountry}
         partners={partners}
+        loading={partnersLoading}
       />
 
       <BilateralTrendChart
         selectedCountry={selectedCountry}
         trendData={trendData}
+        loading={trendLoading}
       />
 
       <ProductGroupsChart
         selectedCountry={selectedCountry}
         products={products}
+        loading={productsLoading}
       />
     </div>
   )

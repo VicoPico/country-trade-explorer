@@ -1,11 +1,13 @@
 import ReactECharts from 'echarts-for-react'
 
-function BilateralTrendChart({ selectedCountry, trendData }) {
+function BilateralTrendChart({ selectedCountry, trendData, loading }) {
+  const hasData = trendData.length > 0
+
   const chartOption = {
     title: {
       text: selectedCountry
-        ? `Mock Bilateral Trade Trend - ${selectedCountry.name}`
-        : 'Mock Bilateral Trade Trend',
+        ? `Bilateral Trade Trend - ${selectedCountry.name}`
+        : 'Bilateral Trade Trend',
     },
     tooltip: {
       trigger: 'axis',
@@ -29,8 +31,15 @@ function BilateralTrendChart({ selectedCountry, trendData }) {
 
   return (
     <section style={{ marginBottom: '2rem' }}>
-      <h2>Mock Bilateral Trade Trend</h2>
-      <ReactECharts option={chartOption} style={{ height: '400px' }} />
+      <h2>Bilateral Trade Trend</h2>
+
+      {loading ? (
+        <p>Loading bilateral trade trend...</p>
+      ) : hasData ? (
+        <ReactECharts option={chartOption} style={{ height: '400px' }} />
+      ) : (
+        <p>No bilateral trend data available for the selected filters.</p>
+      )}
     </section>
   )
 }

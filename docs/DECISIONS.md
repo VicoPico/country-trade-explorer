@@ -60,3 +60,6 @@
 
 - Seed a small set of IMPORT trade observations after introducing the flow filter so both flow directions return meaningful data in the MVP UI.
 - Keep import seed coverage intentionally narrow and focused on the main demo countries (SWE, USA, CHN) rather than attempting broad reference completeness at this stage.
+
+- Add basic loading and empty-state messaging in chart components so backend-backed filter changes feel explicit and less abrupt.
+- Prefer simple textual loading and empty states over more complex skeleton or overlay patterns at the current MVP stage.
