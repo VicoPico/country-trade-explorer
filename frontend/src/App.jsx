@@ -1,8 +1,17 @@
 import { useEffect, useMemo, useState } from 'react'
-import ReactECharts from 'echarts-for-react'
 import './App.css'
-
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+import {
+  fetchBilateralTrend,
+  fetchCountries,
+  fetchHealth,
+  fetchTopPartners,
+  fetchTopProducts,
+} from './api/tradeApi'
+import BilateralTrendChart from './components/BilateralTrendChart'
+import CountrySelector from './components/CountrySelector'
+import HealthStatus from './components/HealthStatus'
+import PartnersChart from './components/PartnersChart'
+import ProductGroupsChart from './components/ProductGroupsChart'
 
 function App() {
   const [health, setHealth] = useState(null)
@@ -13,8 +22,7 @@ function App() {
   const [products, setProducts] = useState([])
 
   useEffect(() => {
-    fetch(`${apiBaseUrl}/api/health`)
-      .then((res) => res.json())
+    fetchHealth()
       .then((data) => setHealth(data))
       .catch(() =>
         setHealth({
@@ -25,8 +33,7 @@ function App() {
   }, [])
 
   useEffect(() => {
-    fetch(`${apiBaseUrl}/api/countries`)
-      .then((res) => res.json())
+    fetchCountries()
       .then((data) => {
         setCountries(data)
         if (data.length > 0) {
@@ -39,8 +46,7 @@ function App() {
   useEffect(() => {
     if (!selectedCountryCode) return
 
-    fetch(`${apiBaseUrl}/api/trade/partners?reporter=${selectedCountryCode}`)
-      .then((res) => res.json())
+    fetchTopPartners(selectedCountryCode)
       .then((data) => setPartners(data))
       .catch(() => setPartners([]))
   }, [selectedCountryCode])
@@ -48,8 +54,7 @@ function App() {
   useEffect(() => {
     if (!selectedCountryCode) return
 
-    fetch(`${apiBaseUrl}/api/trade/bilateral?reporter=${selectedCountryCode}`)
-      .then((res) => res.json())
+    fetchBilateralTrend(selectedCountryCode)
       .then((data) => setTrendData(data))
       .catch(() => setTrendData([]))
   }, [selectedCountryCode])
@@ -57,8 +62,7 @@ function App() {
   useEffect(() => {
     if (!selectedCountryCode) return
 
-    fetch(`${apiBaseUrl}/api/trade/products?reporter=${selectedCountryCode}`)
-      .then((res) => res.json())
+    fetchTopProducts(selectedCountryCode)
       .then((data) => setProducts(data))
       .catch(() => setProducts([]))
   }, [selectedCountryCode])
@@ -68,152 +72,40 @@ function App() {
     [countries, selectedCountryCode],
   )
 
-  const trendChartOption = {
-    title: {
-      text: selectedCountry
-        ? `Mock Trade Trend - ${selectedCountry.name}`
-        : 'Mock Trade Trend',
-    },
-    tooltip: {
-      trigger: 'axis',
-    },
-    xAxis: {
-      type: 'category',
-      data: trendData.map((item) => item.year),
-    },
-    yAxis: {
-      type: 'value',
-      name: 'Trade value',
-    },
-    series: [
-      {
-        data: trendData.map((item) => item.tradeValue),
-        type: 'line',
-        smooth: true,
-      },
-    ],
-  }
-
-  const partnersChartOption = {
-    title: {
-      text: selectedCountry
-        ? `Top Trading Partners - ${selectedCountry.name}`
-        : 'Top Trading Partners',
-    },
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'shadow',
-      },
-    },
-    xAxis: {
-      type: 'category',
-      data: partners.map((partner) => partner.partnerName),
-      axisLabel: {
-        rotate: 25,
-      },
-    },
-    yAxis: {
-      type: 'value',
-      name: 'Trade value',
-    },
-    series: [
-      {
-        data: partners.map((partner) => partner.tradeValue),
-        type: 'bar',
-      },
-    ],
-  }
-
-  const productsChartOption = {
-    title: {
-      text: selectedCountry
-        ? `Top Product Groups - ${selectedCountry.name}`
-        : 'Top Product Groups',
-    },
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'shadow',
-      },
-    },
-    xAxis: {
-      type: 'category',
-      data: products.map((product) => product.productName),
-      axisLabel: {
-        rotate: 25,
-      },
-    },
-    yAxis: {
-      type: 'value',
-      name: 'Trade value',
-    },
-    series: [
-      {
-        data: products.map((product) => product.tradeValue),
-        type: 'bar',
-      },
-    ],
-  }
-
   return (
-    <div style={{ padding: '2rem', fontFamily: 'Arial, sans-serif', maxWidth: '1100px', margin: '0 auto' }}>
+    <div
+      style={{
+        padding: '2rem',
+        fontFamily: 'Arial, sans-serif',
+        maxWidth: '1100px',
+        margin: '0 auto',
+      }}
+    >
       <h1>Country Trade Explorer</h1>
 
-      <section style={{ marginBottom: '2rem' }}>
-        <h2>Backend Health</h2>
-        {health ? (
-          <pre>{JSON.stringify(health, null, 2)}</pre>
-        ) : (
-          <p>Loading backend status...</p>
-        )}
-      </section>
+      <HealthStatus health={health} />
 
-      <section style={{ marginBottom: '2rem' }}>
-        <h2>Country Selector</h2>
+      <CountrySelector
+        countries={countries}
+        selectedCountryCode={selectedCountryCode}
+        selectedCountry={selectedCountry}
+        onCountryChange={setSelectedCountryCode}
+      />
 
-        {countries.length > 0 ? (
-          <>
-            <label htmlFor="country-select">Select a country: </label>
-            <select
-              id="country-select"
-              value={selectedCountryCode}
-              onChange={(event) => setSelectedCountryCode(event.target.value)}
-              style={{ marginLeft: '0.5rem', padding: '0.4rem' }}
-            >
-              {countries.map((country) => (
-                <option key={country.code} value={country.code}>
-                  {country.name} ({country.code})
-                </option>
-              ))}
-            </select>
+      <PartnersChart
+        selectedCountry={selectedCountry}
+        partners={partners}
+      />
 
-            <p style={{ marginTop: '1rem' }}>
-              Selected country:{' '}
-              <strong>
-                {selectedCountry ? `${selectedCountry.name} (${selectedCountry.code})` : 'None'}
-              </strong>
-            </p>
-          </>
-        ) : (
-          <p>Loading countries...</p>
-        )}
-      </section>
+      <BilateralTrendChart
+        selectedCountry={selectedCountry}
+        trendData={trendData}
+      />
 
-      <section style={{ marginBottom: '2rem' }}>
-        <h2>Mock Top Trading Partners</h2>
-        <ReactECharts option={partnersChartOption} style={{ height: '400px' }} />
-      </section>
-
-      <section style={{ marginBottom: '2rem' }}>
-        <h2>Mock Bilateral Trade Trend</h2>
-        <ReactECharts option={trendChartOption} style={{ height: '400px' }} />
-      </section>
-
-      <section>
-        <h2>Mock Top Product Groups</h2>
-        <ReactECharts option={productsChartOption} style={{ height: '400px' }} />
-      </section>
+      <ProductGroupsChart
+        selectedCountry={selectedCountry}
+        products={products}
+      />
     </div>
   )
 }
