@@ -15,7 +15,7 @@ The user selects one country and can view:
 - Backend: Spring Boot
 - Frontend: React + Vite
 - Charts: Apache ECharts
-- Database: PostgreSQL
+- Database: PostgreSQL (via Docker for local development)
 - Database migrations: Flyway
 - Main source: UN Comtrade
 
@@ -71,7 +71,7 @@ mvn clean test
 - backend health endpoint at `/api/health`
 - frontend connectivity test to backend API
 - CORS enabled for local frontend development
-- mock backend countries endpoint at `/api/countries`
+- `/api/countries` now reads country data from PostgreSQL via Spring Data JPA
 - frontend country dropdown wired to backend country data
 - mock backend top trading partners endpoint at `/api/trade/partners`
 - frontend top trading partners chart tied to selected country
