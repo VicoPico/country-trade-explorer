@@ -12,11 +12,14 @@ import CountrySelector from './components/CountrySelector'
 import HealthStatus from './components/HealthStatus'
 import PartnersChart from './components/PartnersChart'
 import ProductGroupsChart from './components/ProductGroupsChart'
+import TradeFilters from './components/TradeFilters'
 
 function App() {
   const [health, setHealth] = useState(null)
   const [countries, setCountries] = useState([])
   const [selectedCountryCode, setSelectedCountryCode] = useState('')
+  const [selectedYear, setSelectedYear] = useState(2024)
+  const [selectedFlow, setSelectedFlow] = useState('EXPORT')
   const [partners, setPartners] = useState([])
   const [trendData, setTrendData] = useState([])
   const [products, setProducts] = useState([])
@@ -46,26 +49,26 @@ function App() {
   useEffect(() => {
     if (!selectedCountryCode) return
 
-    fetchTopPartners(selectedCountryCode)
+    fetchTopPartners(selectedCountryCode, selectedYear, selectedFlow)
       .then((data) => setPartners(data))
       .catch(() => setPartners([]))
-  }, [selectedCountryCode])
+  }, [selectedCountryCode, selectedYear, selectedFlow])
 
   useEffect(() => {
     if (!selectedCountryCode) return
 
-    fetchBilateralTrend(selectedCountryCode)
+    fetchBilateralTrend(selectedCountryCode, selectedFlow)
       .then((data) => setTrendData(data))
       .catch(() => setTrendData([]))
-  }, [selectedCountryCode])
+  }, [selectedCountryCode, selectedFlow])
 
   useEffect(() => {
     if (!selectedCountryCode) return
 
-    fetchTopProducts(selectedCountryCode)
+    fetchTopProducts(selectedCountryCode, selectedYear, selectedFlow)
       .then((data) => setProducts(data))
       .catch(() => setProducts([]))
-  }, [selectedCountryCode])
+  }, [selectedCountryCode, selectedYear, selectedFlow])
 
   const selectedCountry = useMemo(
     () => countries.find((country) => country.code === selectedCountryCode),
@@ -90,6 +93,13 @@ function App() {
         selectedCountryCode={selectedCountryCode}
         selectedCountry={selectedCountry}
         onCountryChange={setSelectedCountryCode}
+      />
+
+      <TradeFilters
+        year={selectedYear}
+        flow={selectedFlow}
+        onYearChange={setSelectedYear}
+        onFlowChange={setSelectedFlow}
       />
 
       <PartnersChart

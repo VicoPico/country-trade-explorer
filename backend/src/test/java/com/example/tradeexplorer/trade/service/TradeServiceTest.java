@@ -35,7 +35,7 @@ class TradeServiceTest {
         when(repository.findTopPartnersByReporterYearAndFlow("SWE", 2024, "EXPORT"))
                 .thenReturn(List.of(row1, row2));
 
-        List<TradePartnerResponse> partners = tradeService.getTopPartners("SWE");
+        List<TradePartnerResponse> partners = tradeService.getTopPartners("SWE", 2024, "EXPORT");
 
         assertEquals(2, partners.size());
         assertEquals("DEU", partners.get(0).partnerCode());
@@ -61,7 +61,7 @@ class TradeServiceTest {
         when(repository.findYearlyTotalsByReporterAndFlow("SWE", "EXPORT"))
                 .thenReturn(List.of(year1, year2));
 
-        List<BilateralTradePointResponse> trend = tradeService.getBilateralTrend("SWE");
+        List<BilateralTradePointResponse> trend = tradeService.getBilateralTrend("SWE", "EXPORT");
 
         assertEquals(2, trend.size());
         assertEquals("2021", trend.get(0).year());
@@ -89,7 +89,7 @@ class TradeServiceTest {
         when(repository.findTopProductsByReporterYearAndFlow("SWE", 2024, "EXPORT"))
                 .thenReturn(List.of(row1, row2));
 
-        List<ProductGroupResponse> products = tradeService.getTopProducts("SWE");
+        List<ProductGroupResponse> products = tradeService.getTopProducts("SWE", 2024, "EXPORT");
 
         assertEquals(2, products.size());
         assertEquals("84", products.get(0).productCode());

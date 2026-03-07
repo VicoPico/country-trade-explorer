@@ -53,3 +53,7 @@
 - Switch `/api/trade/products` to database-backed product-group aggregates after partners and bilateral trends so all three core views share the same persistence-backed architecture.
 - Limit top-partners and top-products responses to 5 rows at the service layer to preserve a stable MVP API shape and match the current UI scope.
 - Keep product aggregation at the reporter/year/flow level for now, without partner filtering, to stay aligned with the current MVP UI scope.
+
+- Add `year` and `flow` request parameters to trade endpoints before introducing more complex filtering so the API stays aligned with likely real-data query dimensions.
+- Wire frontend year and flow selectors directly to backend-backed trade queries, even though current seed data is stronger for exports than imports.
+- Allow empty results for unsupported filter combinations in the current seed dataset rather than adding UI-only fallback behavior.
