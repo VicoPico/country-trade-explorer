@@ -63,3 +63,8 @@
 
 - Add basic loading and empty-state messaging in chart components so backend-backed filter changes feel explicit and less abrupt.
 - Prefer simple textual loading and empty states over more complex skeleton or overlay patterns at the current MVP stage.
+
+## 2026-03-08
+
+- Expose a combined `/api/trade/metadata` endpoint for available years and flows instead of separate endpoints so frontend filter bootstrapping stays simple and extensible.
+- Drive frontend filter options from backend metadata rather than hardcoding them in React, so the UI stays aligned with the currently available dataset.

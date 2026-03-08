@@ -6,6 +6,7 @@ import {
   fetchHealth,
   fetchTopPartners,
   fetchTopProducts,
+  fetchTradeMetadata,
 } from './api/tradeApi'
 import BilateralTrendChart from './components/BilateralTrendChart'
 import CountrySelector from './components/CountrySelector'
@@ -18,8 +19,13 @@ function App() {
   const [health, setHealth] = useState(null)
   const [countries, setCountries] = useState([])
   const [selectedCountryCode, setSelectedCountryCode] = useState('')
-  const [selectedYear, setSelectedYear] = useState(2024)
-  const [selectedFlow, setSelectedFlow] = useState('EXPORT')
+
+  const [availableYears, setAvailableYears] = useState([])
+  const [availableFlows, setAvailableFlows] = useState([])
+  const [metadataLoading, setMetadataLoading] = useState(true)
+
+  const [selectedYear, setSelectedYear] = useState(null)
+  const [selectedFlow, setSelectedFlow] = useState('')
 
   const [partners, setPartners] = useState([])
   const [trendData, setTrendData] = useState([])
@@ -52,7 +58,30 @@ function App() {
   }, [])
 
   useEffect(() => {
-    if (!selectedCountryCode) return
+    setMetadataLoading(true)
+
+    fetchTradeMetadata()
+      .then((data) => {
+        setAvailableYears(data.years || [])
+        setAvailableFlows(data.flows || [])
+
+        if ((data.years || []).length > 0) {
+          setSelectedYear((currentYear) => currentYear ?? data.years[data.years.length - 1])
+        }
+
+        if ((data.flows || []).length > 0) {
+          setSelectedFlow((currentFlow) => currentFlow || data.flows[0])
+        }
+      })
+      .catch(() => {
+        setAvailableYears([])
+        setAvailableFlows([])
+      })
+      .finally(() => setMetadataLoading(false))
+  }, [])
+
+  useEffect(() => {
+    if (!selectedCountryCode || !selectedYear || !selectedFlow) return
 
     setPartnersLoading(true)
     fetchTopPartners(selectedCountryCode, selectedYear, selectedFlow)
@@ -62,7 +91,7 @@ function App() {
   }, [selectedCountryCode, selectedYear, selectedFlow])
 
   useEffect(() => {
-    if (!selectedCountryCode) return
+    if (!selectedCountryCode || !selectedFlow) return
 
     setTrendLoading(true)
     fetchBilateralTrend(selectedCountryCode, selectedFlow)
@@ -72,7 +101,7 @@ function App() {
   }, [selectedCountryCode, selectedFlow])
 
   useEffect(() => {
-    if (!selectedCountryCode) return
+    if (!selectedCountryCode || !selectedYear || !selectedFlow) return
 
     setProductsLoading(true)
     fetchTopProducts(selectedCountryCode, selectedYear, selectedFlow)
@@ -87,15 +116,8 @@ function App() {
   )
 
   return (
-    <div
-      style={{
-        padding: '2rem',
-        fontFamily: 'Arial, sans-serif',
-        maxWidth: '1100px',
-        margin: '0 auto',
-      }}
-    >
-      <h1>Country Trade Explorer</h1>
+    <div className="app-shell">
+      <h1 className="app-title">Country Trade Explorer</h1>
 
       <HealthStatus health={health} />
 
@@ -107,8 +129,11 @@ function App() {
       />
 
       <TradeFilters
-        year={selectedYear}
+        years={availableYears}
+        flows={availableFlows}
+        year={selectedYear ?? ''}
         flow={selectedFlow}
+        loading={metadataLoading}
         onYearChange={setSelectedYear}
         onFlowChange={setSelectedFlow}
       />
