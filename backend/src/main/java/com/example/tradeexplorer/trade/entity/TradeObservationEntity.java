@@ -44,6 +44,26 @@ public class TradeObservationEntity {
     protected TradeObservationEntity() {
     }
 
+    public TradeObservationEntity(
+            String reporterIso3,
+            String partnerIso3,
+            Integer periodYear,
+            String flow,
+            String productCode,
+            String productName,
+            BigDecimal tradeValue,
+            String source
+    ) {
+        this.reporterIso3 = reporterIso3;
+        this.partnerIso3 = partnerIso3;
+        this.periodYear = periodYear;
+        this.flow = flow;
+        this.productCode = productCode;
+        this.productName = productName;
+        this.tradeValue = tradeValue;
+        this.source = source;
+    }
+
     public Long getId() {
         return id;
     }
