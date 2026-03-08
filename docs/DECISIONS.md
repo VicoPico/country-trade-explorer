@@ -68,3 +68,7 @@
 
 - Expose a combined `/api/trade/metadata` endpoint for available years and flows instead of separate endpoints so frontend filter bootstrapping stays simple and extensible.
 - Drive frontend filter options from backend metadata rather than hardcoding them in React, so the UI stays aligned with the currently available dataset.
+
+- Introduce a separate ingestion/application layer for trade imports so external-source handling does not get mixed into the API query services used by the UI.
+- Define a `TradeImportSource` abstraction before integrating a real external provider, so source-specific logic stays behind a clear adapter boundary.
+- Add a dev-only mock trade import endpoint as a narrow first ingestion path to validate import orchestration, persistence mapping, and source replacement behavior before integrating UN Comtrade.

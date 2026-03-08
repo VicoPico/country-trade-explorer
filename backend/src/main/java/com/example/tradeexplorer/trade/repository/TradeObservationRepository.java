@@ -2,6 +2,7 @@ package com.example.tradeexplorer.trade.repository;
 
 import com.example.tradeexplorer.trade.entity.TradeObservationEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -77,4 +78,12 @@ public interface TradeObservationRepository extends JpaRepository<TradeObservati
         ORDER BY t.flow
         """, nativeQuery = true)
     List<String> findAvailableFlows();
+
+    @Modifying
+    void deleteByReporterIso3IgnoreCaseAndPeriodYearAndFlowIgnoreCaseAndSource(
+            String reporterIso3,
+            Integer periodYear,
+            String flow,
+            String source
+    );
 }
