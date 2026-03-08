@@ -2,6 +2,7 @@ package com.example.tradeexplorer.trade.service;
 
 import com.example.tradeexplorer.trade.dto.BilateralTradePointResponse;
 import com.example.tradeexplorer.trade.dto.ProductGroupResponse;
+import com.example.tradeexplorer.trade.dto.TradeMetadataResponse;
 import com.example.tradeexplorer.trade.dto.TradePartnerResponse;
 import com.example.tradeexplorer.trade.repository.PartnerTradeTotalView;
 import com.example.tradeexplorer.trade.repository.ProductTradeTotalView;
@@ -16,6 +17,23 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class TradeServiceTest {
+
+    @Test
+    void shouldReturnTradeMetadataFromRepository() {
+        TradeObservationRepository repository = mock(TradeObservationRepository.class);
+        TradeService tradeService = new TradeService(repository);
+
+        when(repository.findAvailableYears()).thenReturn(List.of(2021, 2022, 2023, 2024));
+        when(repository.findAvailableFlows()).thenReturn(List.of("EXPORT", "IMPORT"));
+
+        TradeMetadataResponse metadata = tradeService.getTradeMetadata();
+
+        assertEquals(List.of(2021, 2022, 2023, 2024), metadata.years());
+        assertEquals(List.of("EXPORT", "IMPORT"), metadata.flows());
+
+        verify(repository).findAvailableYears();
+        verify(repository).findAvailableFlows();
+    }
 
     @Test
     void shouldReturnTopPartnersFromRepository() {

@@ -18,6 +18,10 @@ export function fetchCountries() {
   return fetchJson('/api/countries')
 }
 
+export function fetchTradeMetadata() {
+  return fetchJson('/api/trade/metadata')
+}
+
 export function fetchTopPartners(reporter, year, flow) {
   const params = new URLSearchParams({
     reporter,

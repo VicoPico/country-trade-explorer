@@ -2,6 +2,7 @@ package com.example.tradeexplorer.trade.service;
 
 import com.example.tradeexplorer.trade.dto.BilateralTradePointResponse;
 import com.example.tradeexplorer.trade.dto.ProductGroupResponse;
+import com.example.tradeexplorer.trade.dto.TradeMetadataResponse;
 import com.example.tradeexplorer.trade.dto.TradePartnerResponse;
 import com.example.tradeexplorer.trade.repository.TradeObservationRepository;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,13 @@ public class TradeService {
 
     public TradeService(TradeObservationRepository tradeObservationRepository) {
         this.tradeObservationRepository = tradeObservationRepository;
+    }
+
+    public TradeMetadataResponse getTradeMetadata() {
+        return new TradeMetadataResponse(
+                tradeObservationRepository.findAvailableYears(),
+                tradeObservationRepository.findAvailableFlows()
+        );
     }
 
     public List<TradePartnerResponse> getTopPartners(String reporter, Integer year, String flow) {

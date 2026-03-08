@@ -33,6 +33,14 @@ class ApiSmokeTest {
     }
 
     @Test
+    void tradeMetadataEndpointShouldReturnData() throws Exception {
+        mockMvc.perform(get("/api/trade/metadata"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.years.length()").value(greaterThan(0)))
+                .andExpect(jsonPath("$.flows.length()").value(greaterThan(0)));
+    }
+
+    @Test
     void partnersEndpointShouldReturnData() throws Exception {
         mockMvc.perform(
                         get("/api/trade/partners")

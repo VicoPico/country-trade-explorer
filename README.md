@@ -77,10 +77,11 @@ CTE_DB_HOST=localhost CTE_DB_PORT=5434 CTE_DB_NAME=trade_explorer CTE_DB_USER=po
 - `/api/trade/bilateral` reads yearly trade aggregates from seeded PostgreSQL trade observations
 - `/api/trade/products` reads the top 5 product-group aggregates from seeded PostgreSQL trade observations
 - frontend top trading partners, bilateral trend, and top product groups charts are all DB-backed
-- year and flow request parameters added to trade endpoints
-- frontend year and flow filters wired to backend trade queries
+- backend trade metadata endpoint now provides available years and flows
+- frontend year and flow filter options are now loaded from backend metadata
 - import seed data added so both EXPORT and IMPORT flows return meaningful chart data
-- frontend charts now show basic loading and empty-state messaging
+- frontend charts show basic loading and empty-state messaging
+- frontend shared CSS structure now replaces most inline styling
 - frontend API calls extracted into a dedicated client module
 - frontend UI split into smaller chart and selector components
 - backend API responses migrated from generic maps to typed DTO classes

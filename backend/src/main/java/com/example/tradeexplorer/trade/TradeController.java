@@ -2,6 +2,7 @@ package com.example.tradeexplorer.trade;
 
 import com.example.tradeexplorer.trade.dto.BilateralTradePointResponse;
 import com.example.tradeexplorer.trade.dto.ProductGroupResponse;
+import com.example.tradeexplorer.trade.dto.TradeMetadataResponse;
 import com.example.tradeexplorer.trade.dto.TradePartnerResponse;
 import com.example.tradeexplorer.trade.service.TradeService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,11 @@ public class TradeController {
 
     public TradeController(TradeService tradeService) {
         this.tradeService = tradeService;
+    }
+
+    @GetMapping("/api/trade/metadata")
+    public TradeMetadataResponse getTradeMetadata() {
+        return tradeService.getTradeMetadata();
     }
 
     @GetMapping("/api/trade/partners")

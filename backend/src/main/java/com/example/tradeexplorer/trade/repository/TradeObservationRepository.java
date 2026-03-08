@@ -63,4 +63,18 @@ public interface TradeObservationRepository extends JpaRepository<TradeObservati
             @Param("periodYear") Integer periodYear,
             @Param("flow") String flow
     );
+
+    @Query(value = """
+        SELECT DISTINCT t.period_year
+        FROM trade_observation t
+        ORDER BY t.period_year
+        """, nativeQuery = true)
+    List<Integer> findAvailableYears();
+
+    @Query(value = """
+        SELECT DISTINCT t.flow
+        FROM trade_observation t
+        ORDER BY t.flow
+        """, nativeQuery = true)
+    List<String> findAvailableFlows();
 }
