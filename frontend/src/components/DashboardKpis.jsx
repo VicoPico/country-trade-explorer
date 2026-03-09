@@ -1,20 +1,19 @@
 function formatTradeValue(value) {
-  if (value == null || Number.isNaN(value)) {
-    return '—'
+  if (!value || value <= 0) return 'No data'
+
+  if (value >= 1_000_000_000) {
+    return `${(value / 1_000_000_000).toFixed(2)}B`
   }
 
-  return new Intl.NumberFormat('en-US', {
-    notation: 'compact',
-    maximumFractionDigits: 1,
-  }).format(value)
-}
-
-function formatPercent(value) {
-  if (value == null || Number.isNaN(value)) {
-    return '—'
+  if (value >= 1_000_000) {
+    return `${(value / 1_000_000).toFixed(2)}M`
   }
 
-  return `${value > 0 ? '+' : ''}${value.toFixed(1)}%`
+  if (value >= 1_000) {
+    return `${(value / 1_000).toFixed(1)}K`
+  }
+
+  return value.toFixed(0)
 }
 
 function DashboardKpis({
@@ -25,82 +24,75 @@ function DashboardKpis({
   products,
   trendData,
 }) {
-  const topPartner = partners.length > 0 ? partners[0] : null
-  const topProduct = products.length > 0 ? products[0] : null
+  const totalPartners = partners.length
+  const totalProducts = products.length
 
-  const partnerTotal = partners.reduce((sum, item) => sum + item.tradeValue, 0)
-  const productTotal = products.reduce((sum, item) => sum + item.tradeValue, 0)
+  const topPartner = partners[0]?.partner || 'No data'
+  const topPartnerValue = partners[0]?.tradeValue || 0
 
-  const latestTrendValue =
-    trendData.length > 0 ? trendData[trendData.length - 1].tradeValue : null
-  const previousTrendValue =
-    trendData.length > 1 ? trendData[trendData.length - 2].tradeValue : null
+  const topProduct = products[0]?.product || 'No data'
+  const topProductValue = products[0]?.tradeValue || 0
 
-  const trendChange =
-    latestTrendValue != null &&
-    previousTrendValue != null &&
-    previousTrendValue !== 0
-      ? ((latestTrendValue - previousTrendValue) / previousTrendValue) * 100
-      : null
+  const latestTrendValue = trendData.at(-1)?.tradeValue || 0
+  const firstTrendValue = trendData[0]?.tradeValue || 0
 
-  const cards = [
-    {
-      label: 'Selected Country',
-      value: selectedCountry ? selectedCountry.name : 'Loading...',
-      helper: selectedCountry ? selectedCountry.code : '—',
-      tone: 'blue',
-    },
-    {
-      label: 'Trade Slice',
-      value: `${selectedFlow || '—'} • ${selectedYear || '—'}`,
-      helper: 'Active dashboard view',
-      tone: 'slate',
-    },
-    {
-      label: 'Top Partner',
-      value: topPartner ? topPartner.partnerName : '—',
-      helper: topPartner ? formatTradeValue(topPartner.tradeValue) : 'No data',
-      tone: 'green',
-    },
-    {
-      label: 'Top Product Group',
-      value: topProduct ? topProduct.productName : '—',
-      helper: topProduct ? formatTradeValue(topProduct.tradeValue) : 'No data',
-      tone: 'purple',
-    },
-    {
-      label: 'Trend Momentum',
-      value: formatPercent(trendChange),
-      helper:
-        latestTrendValue != null
-          ? `Latest: ${formatTradeValue(latestTrendValue)}`
-          : 'No trend data',
-      tone: 'amber',
-    },
-    {
-      label: 'Partners Total',
-      value: formatTradeValue(partnerTotal),
-      helper: 'Top partners currently shown',
-      tone: 'cyan',
-    },
-    {
-      label: 'Products Total',
-      value: formatTradeValue(productTotal),
-      helper: 'Top products currently shown',
-      tone: 'rose',
-    },
-  ]
+  const trendDirection =
+    latestTrendValue > firstTrendValue
+      ? 'Growing'
+      : latestTrendValue < firstTrendValue
+        ? 'Declining'
+        : 'Stable'
 
   return (
-    <section className="kpi-grid">
-      {cards.map((card) => (
-        <article key={card.label} className={`kpi-card kpi-card--${card.tone}`}>
-          <p className="kpi-label">{card.label}</p>
-          <h3 className="kpi-value">{card.value}</h3>
-          <p className="kpi-helper">{card.helper}</p>
+    <>
+      <section className="kpi-grid kpi-grid--top">
+        <article className="kpi-card kpi-card--blue">
+          <p className="kpi-label">Selected Country</p>
+          <h3 className="kpi-value">
+            {selectedCountry ? selectedCountry.name : 'Loading'}
+          </h3>
+          <p className="kpi-helper">{selectedCountry?.code || '—'}</p>
         </article>
-      ))}
-    </section>
+
+        <article className="kpi-card kpi-card--slate">
+          <p className="kpi-label">Trade Slice</p>
+          <h3 className="kpi-value">{selectedFlow || '—'}</h3>
+          <p className="kpi-helper">{selectedYear || '—'}</p>
+        </article>
+
+        <article className="kpi-card kpi-card--green">
+          <p className="kpi-label">Top Partner</p>
+          <h3 className="kpi-value">{topPartner}</h3>
+          <p className="kpi-helper">{formatTradeValue(topPartnerValue)}</p>
+        </article>
+      </section>
+
+      <section className="kpi-grid kpi-grid--bottom">
+        <article className="kpi-card kpi-card--purple">
+          <p className="kpi-label">Top Product</p>
+          <h3 className="kpi-value">{topProduct}</h3>
+          <p className="kpi-helper">{formatTradeValue(topProductValue)}</p>
+        </article>
+
+        <article className="kpi-card kpi-card--amber">
+          <p className="kpi-label">Partners Visible</p>
+          <h3 className="kpi-value">{totalPartners}</h3>
+          <p className="kpi-helper">Current ranking</p>
+        </article>
+
+        <article className="kpi-card kpi-card--cyan">
+          <p className="kpi-label">Products Visible</p>
+          <h3 className="kpi-value">{totalProducts}</h3>
+          <p className="kpi-helper">Current ranking</p>
+        </article>
+
+        <article className="kpi-card kpi-card--rose">
+          <p className="kpi-label">Trend Direction</p>
+          <h3 className="kpi-value">{trendDirection}</h3>
+          <p className="kpi-helper">{formatTradeValue(latestTrendValue)}</p>
+        </article>
+      </section>
+    </>
   )
 }
 
