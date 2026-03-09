@@ -1,19 +1,19 @@
 function formatTradeValue(value) {
-  if (!value || value <= 0) return 'No data'
+  if (!value || value <= 0) return "No data";
 
   if (value >= 1_000_000_000) {
-    return `${(value / 1_000_000_000).toFixed(2)}B`
+    return `${(value / 1_000_000_000).toFixed(2)}B`;
   }
 
   if (value >= 1_000_000) {
-    return `${(value / 1_000_000).toFixed(2)}M`
+    return `${(value / 1_000_000).toFixed(2)}M`;
   }
 
   if (value >= 1_000) {
-    return `${(value / 1_000).toFixed(1)}K`
+    return `${(value / 1_000).toFixed(1)}K`;
   }
 
-  return value.toFixed(0)
+  return value.toFixed(0);
 }
 
 function DashboardKpis({
@@ -24,24 +24,26 @@ function DashboardKpis({
   products,
   trendData,
 }) {
-  const totalPartners = partners.length
-  const totalProducts = products.length
+  const totalPartners = partners.length;
+  const totalProducts = products.length;
 
-  const topPartner = partners[0]?.partner || 'No data'
-  const topPartnerValue = partners[0]?.tradeValue || 0
+  const topPartner =
+    partners[0]?.partnerName ?? partners[0]?.partner ?? "No data";
+  const topPartnerValue = partners[0]?.tradeValue || 0;
 
-  const topProduct = products[0]?.product || 'No data'
-  const topProductValue = products[0]?.tradeValue || 0
+  const topProduct =
+    products[0]?.productName ?? products[0]?.product ?? "No data";
+  const topProductValue = products[0]?.tradeValue || 0;
 
-  const latestTrendValue = trendData.at(-1)?.tradeValue || 0
-  const firstTrendValue = trendData[0]?.tradeValue || 0
+  const latestTrendValue = trendData.at(-1)?.tradeValue || 0;
+  const firstTrendValue = trendData[0]?.tradeValue || 0;
 
   const trendDirection =
     latestTrendValue > firstTrendValue
-      ? 'Growing'
+      ? "Growing"
       : latestTrendValue < firstTrendValue
-        ? 'Declining'
-        : 'Stable'
+        ? "Declining"
+        : "Stable";
 
   return (
     <>
@@ -49,15 +51,15 @@ function DashboardKpis({
         <article className="kpi-card kpi-card--blue">
           <p className="kpi-label">Selected Country</p>
           <h3 className="kpi-value">
-            {selectedCountry ? selectedCountry.name : 'Loading'}
+            {selectedCountry ? selectedCountry.name : "Loading"}
           </h3>
-          <p className="kpi-helper">{selectedCountry?.code || '—'}</p>
+          <p className="kpi-helper">{selectedCountry?.code || "—"}</p>
         </article>
 
         <article className="kpi-card kpi-card--slate">
           <p className="kpi-label">Trade Slice</p>
-          <h3 className="kpi-value">{selectedFlow || '—'}</h3>
-          <p className="kpi-helper">{selectedYear || '—'}</p>
+          <h3 className="kpi-value">{selectedFlow || "—"}</h3>
+          <p className="kpi-helper">{selectedYear || "—"}</p>
         </article>
 
         <article className="kpi-card kpi-card--green">
@@ -93,7 +95,7 @@ function DashboardKpis({
         </article>
       </section>
     </>
-  )
+  );
 }
 
-export default DashboardKpis
+export default DashboardKpis;
