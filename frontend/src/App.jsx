@@ -17,6 +17,7 @@ import ProductGroupsChart from "./components/ProductGroupsChart";
 import TradeFilters from "./components/TradeFilters";
 
 const THEME_STORAGE_KEY = "country-trade-explorer-theme";
+const DEFAULT_REQUEST_TIMEOUT_MS = 15000;
 
 function App() {
   const [theme, setTheme] = useState(() => {
@@ -49,32 +50,72 @@ function App() {
   }, [theme]);
 
   useEffect(() => {
-    fetchHealth()
-      .then((data) => setHealth(data))
-      .catch(() =>
+    const controller = new AbortController();
+    let active = true;
+
+    fetchHealth({
+      signal: controller.signal,
+      timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS,
+    })
+      .then((data) => {
+        if (!active) return;
+        setHealth(data);
+      })
+      .catch((error) => {
+        if (!active) return;
+        if (error?.name === "AbortError") return;
+
         setHealth({
           status: "DOWN",
           service: "backend unreachable",
-        }),
-      );
+        });
+      });
+
+    return () => {
+      active = false;
+      controller.abort();
+    };
   }, []);
 
   useEffect(() => {
-    fetchCountries()
+    const controller = new AbortController();
+    let active = true;
+
+    fetchCountries({
+      signal: controller.signal,
+      timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS,
+    })
       .then((data) => {
+        if (!active) return;
         setCountries(data);
         if (data.length > 0) {
           setSelectedCountryCode(data[0].code);
         }
       })
-      .catch(() => setCountries([]));
+      .catch((error) => {
+        if (!active) return;
+        if (error?.name === "AbortError") return;
+        setCountries([]);
+      });
+
+    return () => {
+      active = false;
+      controller.abort();
+    };
   }, []);
 
   useEffect(() => {
+    const controller = new AbortController();
+    let active = true;
+
     setMetadataLoading(true);
 
-    fetchTradeMetadata()
+    fetchTradeMetadata({
+      signal: controller.signal,
+      timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS,
+    })
       .then((data) => {
+        if (!active) return;
         setAvailableYears(data.years || []);
         setAvailableFlows(data.flows || []);
 
@@ -88,41 +129,123 @@ function App() {
           setSelectedFlow((currentFlow) => currentFlow || data.flows[0]);
         }
       })
-      .catch(() => {
+      .catch((error) => {
+        if (!active) return;
+        if (error?.name === "AbortError") return;
         setAvailableYears([]);
         setAvailableFlows([]);
       })
-      .finally(() => setMetadataLoading(false));
+      .finally(() => {
+        if (!active) return;
+        setMetadataLoading(false);
+      });
+
+    return () => {
+      active = false;
+      controller.abort();
+    };
   }, []);
 
   useEffect(() => {
-    if (!selectedCountryCode || !selectedYear || !selectedFlow) return;
+    if (!selectedCountryCode || !selectedYear || !selectedFlow) {
+      setPartnersLoading(false);
+      return;
+    }
+
+    const controller = new AbortController();
+    let active = true;
 
     setPartnersLoading(true);
-    fetchTopPartners(selectedCountryCode, selectedYear, selectedFlow)
-      .then((data) => setPartners(data))
-      .catch(() => setPartners([]))
-      .finally(() => setPartnersLoading(false));
+    fetchTopPartners(selectedCountryCode, selectedYear, selectedFlow, {
+      signal: controller.signal,
+      timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS,
+    })
+      .then((data) => {
+        if (!active) return;
+        setPartners(data);
+      })
+      .catch((error) => {
+        if (!active) return;
+        if (error?.name === "AbortError") return;
+        setPartners([]);
+      })
+      .finally(() => {
+        if (!active) return;
+        setPartnersLoading(false);
+      });
+
+    return () => {
+      active = false;
+      controller.abort();
+    };
   }, [selectedCountryCode, selectedYear, selectedFlow]);
 
   useEffect(() => {
-    if (!selectedCountryCode || !selectedFlow) return;
+    if (!selectedCountryCode || !selectedFlow) {
+      setTrendLoading(false);
+      return;
+    }
+
+    const controller = new AbortController();
+    let active = true;
 
     setTrendLoading(true);
-    fetchBilateralTrend(selectedCountryCode, selectedFlow)
-      .then((data) => setTrendData(data))
-      .catch(() => setTrendData([]))
-      .finally(() => setTrendLoading(false));
+    fetchBilateralTrend(selectedCountryCode, selectedFlow, {
+      signal: controller.signal,
+      timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS,
+    })
+      .then((data) => {
+        if (!active) return;
+        setTrendData(data);
+      })
+      .catch((error) => {
+        if (!active) return;
+        if (error?.name === "AbortError") return;
+        setTrendData([]);
+      })
+      .finally(() => {
+        if (!active) return;
+        setTrendLoading(false);
+      });
+
+    return () => {
+      active = false;
+      controller.abort();
+    };
   }, [selectedCountryCode, selectedFlow]);
 
   useEffect(() => {
-    if (!selectedCountryCode || !selectedYear || !selectedFlow) return;
+    if (!selectedCountryCode || !selectedYear || !selectedFlow) {
+      setProductsLoading(false);
+      return;
+    }
+
+    const controller = new AbortController();
+    let active = true;
 
     setProductsLoading(true);
-    fetchTopProducts(selectedCountryCode, selectedYear, selectedFlow)
-      .then((data) => setProducts(data))
-      .catch(() => setProducts([]))
-      .finally(() => setProductsLoading(false));
+    fetchTopProducts(selectedCountryCode, selectedYear, selectedFlow, {
+      signal: controller.signal,
+      timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS,
+    })
+      .then((data) => {
+        if (!active) return;
+        setProducts(data);
+      })
+      .catch((error) => {
+        if (!active) return;
+        if (error?.name === "AbortError") return;
+        setProducts([]);
+      })
+      .finally(() => {
+        if (!active) return;
+        setProductsLoading(false);
+      });
+
+    return () => {
+      active = false;
+      controller.abort();
+    };
   }, [selectedCountryCode, selectedYear, selectedFlow]);
 
   const selectedCountry = useMemo(
