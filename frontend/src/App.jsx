@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
-import './App.css'
+import { useEffect, useMemo, useState } from "react";
+import "./App.css";
 import {
   fetchBilateralTrend,
   fetchCountries,
@@ -7,129 +7,131 @@ import {
   fetchTopPartners,
   fetchTopProducts,
   fetchTradeMetadata,
-} from './api/tradeApi'
-import BilateralTrendChart from './components/BilateralTrendChart'
-import CountrySelector from './components/CountrySelector'
-import DashboardKpis from './components/DashboardKpis'
-import HealthStatus from './components/HealthStatus'
-import PartnersChart from './components/PartnersChart'
-import ProductGroupsChart from './components/ProductGroupsChart'
-import TradeFilters from './components/TradeFilters'
+} from "./api/tradeApi";
+import BilateralTrendChart from "./components/BilateralTrendChart";
+import CountrySelector from "./components/CountrySelector";
+import DashboardKpis from "./components/DashboardKpis";
+import HealthStatus from "./components/HealthStatus";
+import PartnersChart from "./components/PartnersChart";
+import ProductGroupsChart from "./components/ProductGroupsChart";
+import TradeFilters from "./components/TradeFilters";
 
-const THEME_STORAGE_KEY = 'country-trade-explorer-theme'
+const THEME_STORAGE_KEY = "country-trade-explorer-theme";
 
 function App() {
   const [theme, setTheme] = useState(() => {
-    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY)
-    return storedTheme || 'light'
-  })
+    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    return storedTheme || "light";
+  });
 
-  const [health, setHealth] = useState(null)
-  const [countries, setCountries] = useState([])
-  const [selectedCountryCode, setSelectedCountryCode] = useState('')
+  const [health, setHealth] = useState(null);
+  const [countries, setCountries] = useState([]);
+  const [selectedCountryCode, setSelectedCountryCode] = useState("");
 
-  const [availableYears, setAvailableYears] = useState([])
-  const [availableFlows, setAvailableFlows] = useState([])
-  const [metadataLoading, setMetadataLoading] = useState(true)
+  const [availableYears, setAvailableYears] = useState([]);
+  const [availableFlows, setAvailableFlows] = useState([]);
+  const [metadataLoading, setMetadataLoading] = useState(true);
 
-  const [selectedYear, setSelectedYear] = useState(null)
-  const [selectedFlow, setSelectedFlow] = useState('')
+  const [selectedYear, setSelectedYear] = useState(null);
+  const [selectedFlow, setSelectedFlow] = useState("");
 
-  const [partners, setPartners] = useState([])
-  const [trendData, setTrendData] = useState([])
-  const [products, setProducts] = useState([])
+  const [partners, setPartners] = useState([]);
+  const [trendData, setTrendData] = useState([]);
+  const [products, setProducts] = useState([]);
 
-  const [partnersLoading, setPartnersLoading] = useState(false)
-  const [trendLoading, setTrendLoading] = useState(false)
-  const [productsLoading, setProductsLoading] = useState(false)
+  const [partnersLoading, setPartnersLoading] = useState(false);
+  const [trendLoading, setTrendLoading] = useState(false);
+  const [productsLoading, setProductsLoading] = useState(false);
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme)
-    localStorage.setItem(THEME_STORAGE_KEY, theme)
-  }, [theme])
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  }, [theme]);
 
   useEffect(() => {
     fetchHealth()
       .then((data) => setHealth(data))
       .catch(() =>
         setHealth({
-          status: 'DOWN',
-          service: 'backend unreachable',
+          status: "DOWN",
+          service: "backend unreachable",
         }),
-      )
-  }, [])
+      );
+  }, []);
 
   useEffect(() => {
     fetchCountries()
       .then((data) => {
-        setCountries(data)
+        setCountries(data);
         if (data.length > 0) {
-          setSelectedCountryCode(data[0].code)
+          setSelectedCountryCode(data[0].code);
         }
       })
-      .catch(() => setCountries([]))
-  }, [])
+      .catch(() => setCountries([]));
+  }, []);
 
   useEffect(() => {
-    setMetadataLoading(true)
+    setMetadataLoading(true);
 
     fetchTradeMetadata()
       .then((data) => {
-        setAvailableYears(data.years || [])
-        setAvailableFlows(data.flows || [])
+        setAvailableYears(data.years || []);
+        setAvailableFlows(data.flows || []);
 
         if ((data.years || []).length > 0) {
-          setSelectedYear((currentYear) => currentYear ?? data.years[data.years.length - 1])
+          setSelectedYear(
+            (currentYear) => currentYear ?? data.years[data.years.length - 1],
+          );
         }
 
         if ((data.flows || []).length > 0) {
-          setSelectedFlow((currentFlow) => currentFlow || data.flows[0])
+          setSelectedFlow((currentFlow) => currentFlow || data.flows[0]);
         }
       })
       .catch(() => {
-        setAvailableYears([])
-        setAvailableFlows([])
+        setAvailableYears([]);
+        setAvailableFlows([]);
       })
-      .finally(() => setMetadataLoading(false))
-  }, [])
+      .finally(() => setMetadataLoading(false));
+  }, []);
 
   useEffect(() => {
-    if (!selectedCountryCode || !selectedYear || !selectedFlow) return
+    if (!selectedCountryCode || !selectedYear || !selectedFlow) return;
 
-    setPartnersLoading(true)
+    setPartnersLoading(true);
     fetchTopPartners(selectedCountryCode, selectedYear, selectedFlow)
       .then((data) => setPartners(data))
       .catch(() => setPartners([]))
-      .finally(() => setPartnersLoading(false))
-  }, [selectedCountryCode, selectedYear, selectedFlow])
+      .finally(() => setPartnersLoading(false));
+  }, [selectedCountryCode, selectedYear, selectedFlow]);
 
   useEffect(() => {
-    if (!selectedCountryCode || !selectedFlow) return
+    if (!selectedCountryCode || !selectedFlow) return;
 
-    setTrendLoading(true)
+    setTrendLoading(true);
     fetchBilateralTrend(selectedCountryCode, selectedFlow)
       .then((data) => setTrendData(data))
       .catch(() => setTrendData([]))
-      .finally(() => setTrendLoading(false))
-  }, [selectedCountryCode, selectedFlow])
+      .finally(() => setTrendLoading(false));
+  }, [selectedCountryCode, selectedFlow]);
 
   useEffect(() => {
-    if (!selectedCountryCode || !selectedYear || !selectedFlow) return
+    if (!selectedCountryCode || !selectedYear || !selectedFlow) return;
 
-    setProductsLoading(true)
+    setProductsLoading(true);
     fetchTopProducts(selectedCountryCode, selectedYear, selectedFlow)
       .then((data) => setProducts(data))
       .catch(() => setProducts([]))
-      .finally(() => setProductsLoading(false))
-  }, [selectedCountryCode, selectedYear, selectedFlow])
+      .finally(() => setProductsLoading(false));
+  }, [selectedCountryCode, selectedYear, selectedFlow]);
 
   const selectedCountry = useMemo(
     () => countries.find((country) => country.code === selectedCountryCode),
     [countries, selectedCountryCode],
-  )
+  );
 
   function handleThemeToggle() {
-    setTheme((currentTheme) => (currentTheme === 'light' ? 'dark' : 'light'))
+    setTheme((currentTheme) => (currentTheme === "light" ? "dark" : "light"));
   }
 
   return (
@@ -138,15 +140,22 @@ function App() {
         <div className="hero-card">
           <div className="hero-toolbar">
             <p className="hero-eyebrow">Country Trade Explorer</p>
-            <button type="button" className="theme-toggle" onClick={handleThemeToggle}>
-              {theme === 'light' ? 'Dark mode' : 'Light mode'}
+            <button
+              type="button"
+              className="theme-toggle"
+              onClick={handleThemeToggle}
+            >
+              {theme === "light" ? "Dark mode" : "Light mode"}
             </button>
           </div>
 
-          <h1 className="app-title">Trade dashboard for bilateral relationships and product flows</h1>
+          <h1 className="app-title">
+            Trade dashboard for bilateral relationships and product flows
+          </h1>
           <p className="hero-text">
-            Explore partners, trade trends, and product groups with a clean portfolio-style dashboard
-            built on Spring Boot, React, PostgreSQL, and UN Comtrade-oriented ingestion.
+            Explore partners, trade trends, and product groups with a clean
+            portfolio-style dashboard built on Spring Boot, React, PostgreSQL,
+            and UN Comtrade-oriented ingestion.
           </p>
         </div>
 
@@ -155,8 +164,8 @@ function App() {
           <div>
             <h2 className="hero-side-title">What this dashboard highlights</h2>
             <p className="hero-side-text">
-              A selected country, a filterable trade slice, summary KPIs, and chart panels that are
-              ready for real imported data.
+              A selected country, a filterable trade slice, summary KPIs, and
+              chart panels that are ready for real imported data.
             </p>
           </div>
         </div>
@@ -177,7 +186,7 @@ function App() {
         <TradeFilters
           years={availableYears}
           flows={availableFlows}
-          year={selectedYear ?? ''}
+          year={selectedYear ?? ""}
           flow={selectedFlow}
           loading={metadataLoading}
           onYearChange={setSelectedYear}
@@ -203,12 +212,13 @@ function App() {
           </div>
 
           <p className="helper-text">
-            Use the country selector and the trade filters to switch the current dashboard slice.
+            Use the country selector and the trade filters to switch the current
+            dashboard slice.
           </p>
           <br />
           <p className="helper-text">
-            The cards summarize the active view, while the charts below show partners, historical
-            trend, and product composition.
+            The cards summarize the active view, while the charts below show
+            partners, historical trend, and product composition.
           </p>
         </section>
       </section>
@@ -218,22 +228,25 @@ function App() {
           selectedCountry={selectedCountry}
           partners={partners}
           loading={partnersLoading}
+          theme={theme}
         />
 
         <BilateralTrendChart
           selectedCountry={selectedCountry}
           trendData={trendData}
           loading={trendLoading}
+          theme={theme}
         />
 
         <ProductGroupsChart
           selectedCountry={selectedCountry}
           products={products}
           loading={productsLoading}
+          theme={theme}
         />
       </section>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

@@ -1,7 +1,15 @@
 :root {
   --bg-primary:
-    radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 30%),
-    radial-gradient(circle at top right, rgba(16, 185, 129, 0.14), transparent 24%),
+    radial-gradient(
+      circle at top left,
+      rgba(59, 130, 246, 0.16),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(16, 185, 129, 0.14),
+      transparent 24%
+    ),
     linear-gradient(180deg, #f8fbff 0%, #eef4fb 100%);
   --text-main: #0f172a;
   --text-muted: #475569;
@@ -19,19 +27,27 @@
   --button-bg: #0f172a;
   --button-text: #ffffff;
   --button-border: #0f172a;
-  --kpi-blue: linear-gradient(180deg, rgba(239, 246, 255, 0.96), rgba(255, 255, 255, 0.96));
-  --kpi-slate: linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(255, 255, 255, 0.96));
-  --kpi-green: linear-gradient(180deg, rgba(236, 253, 245, 0.96), rgba(255, 255, 255, 0.96));
-  --kpi-purple: linear-gradient(180deg, rgba(245, 243, 255, 0.96), rgba(255, 255, 255, 0.96));
-  --kpi-amber: linear-gradient(180deg, rgba(255, 251, 235, 0.96), rgba(255, 255, 255, 0.96));
-  --kpi-cyan: linear-gradient(180deg, rgba(236, 254, 255, 0.96), rgba(255, 255, 255, 0.96));
-  --kpi-rose: linear-gradient(180deg, rgba(255, 241, 242, 0.96), rgba(255, 255, 255, 0.96));
+  --kpi-blue: var(--panel-bg);
+  --kpi-slate: var(--panel-bg);
+  --kpi-green: var(--panel-bg);
+  --kpi-purple: var(--panel-bg);
+  --kpi-amber: var(--panel-bg);
+  --kpi-cyan: var(--panel-bg);
+  --kpi-rose: var(--panel-bg);
 }
 
-:root[data-theme='dark'] {
+:root[data-theme="dark"] {
   --bg-primary:
-    radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 28%),
-    radial-gradient(circle at top right, rgba(16, 185, 129, 0.12), transparent 20%),
+    radial-gradient(
+      circle at top left,
+      rgba(59, 130, 246, 0.18),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(16, 185, 129, 0.12),
+      transparent 20%
+    ),
     linear-gradient(180deg, #0b1220 0%, #111827 100%);
   --text-main: #e5eefb;
   --text-muted: #b8c7dd;
@@ -49,13 +65,13 @@
   --button-bg: #e2e8f0;
   --button-text: #0f172a;
   --button-border: #e2e8f0;
-  --kpi-blue: linear-gradient(180deg, rgba(30, 64, 175, 0.22), rgba(15, 23, 42, 0.92));
-  --kpi-slate: linear-gradient(180deg, rgba(51, 65, 85, 0.3), rgba(15, 23, 42, 0.92));
-  --kpi-green: linear-gradient(180deg, rgba(5, 150, 105, 0.2), rgba(15, 23, 42, 0.92));
-  --kpi-purple: linear-gradient(180deg, rgba(109, 40, 217, 0.2), rgba(15, 23, 42, 0.92));
-  --kpi-amber: linear-gradient(180deg, rgba(217, 119, 6, 0.2), rgba(15, 23, 42, 0.92));
-  --kpi-cyan: linear-gradient(180deg, rgba(8, 145, 178, 0.2), rgba(15, 23, 42, 0.92));
-  --kpi-rose: linear-gradient(180deg, rgba(225, 29, 72, 0.18), rgba(15, 23, 42, 0.92));
+  --kpi-blue: var(--panel-bg);
+  --kpi-slate: var(--panel-bg);
+  --kpi-green: var(--panel-bg);
+  --kpi-purple: var(--panel-bg);
+  --kpi-amber: var(--panel-bg);
+  --kpi-cyan: var(--panel-bg);
+  --kpi-rose: var(--panel-bg);
 }
 
 * {
@@ -68,7 +84,9 @@ body {
   min-height: 100vh;
   background: var(--bg-primary);
   color: var(--text-main);
-  transition: background 0.25s ease, color 0.25s ease;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease;
 }
 
 #root {
@@ -97,7 +115,10 @@ body {
   border: 1px solid var(--panel-border);
   box-shadow: var(--panel-shadow);
   border-radius: 20px;
-  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .hero-card {
