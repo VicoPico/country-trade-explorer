@@ -17,6 +17,16 @@ The project is designed as a portfolio-grade backend + frontend system:
 - backend focuses on clean domain layering, ingestion separation, persistence, and query APIs
 - frontend focuses on dashboard-style data presentation
 
+## Dashboard Preview
+
+### Light mode
+
+![Country Trade Explorer dashboard light mode](docs/screenshots/dashboard-light.png)
+
+### Dark mode
+
+![Country Trade Explorer dashboard dark mode](docs/screenshots/dashboard-dark.png)
+
 ## Tech Stack
 
 ### Backend
@@ -34,7 +44,7 @@ The project is designed as a portfolio-grade backend + frontend system:
 - Vite
 - Apache ECharts
 
-### Data source
+### Data Source
 
 - UN Comtrade API
 
@@ -157,8 +167,6 @@ Current state:
 
 Next steps:
 
-- screenshot-ready polish
-- README visuals
 - stronger import replacement strategy
 - broader country mapping
 - production-ready real data ingestion
