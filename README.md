@@ -1,43 +1,90 @@
 # Country Trade Explorer
 
-A web app for exploring bilateral trade relationships between countries using UN Comtrade as the main data source.
+A full-stack trade analytics project for exploring bilateral trade relationships between countries using a real UN Comtrade ingestion path.
 
-## Goal
+## Overview
 
-The user selects one country and can view:
+Country Trade Explorer allows a user to select a country and inspect:
 
-- top trading partners
-- bilateral import/export trends
-- top traded product groups over time
-
-## Tech stack
-
-- Backend: Spring Boot
-- Frontend: React + Vite
-- Charts: Apache ECharts
-- Database: PostgreSQL (Docker-only for local development)
-- Database migrations: Flyway
-- Main source: UN Comtrade
-
-## Monorepo structure
-
-- `backend/` Spring Boot API
-- `frontend/` React app
-- `docs/` project notes and decisions
-- `READ_AGENT.md` persistent project instructions/context for AI-assisted work
-
-## Planned MVP
-
-- country selector
-- top trading partners view
-- bilateral trade trends
+- top trade partners
+- bilateral yearly trade trends
 - top traded product groups
-- normalized trade data model
-- cached local storage of source data
+- filterable import/export views
+- metadata-driven year and flow selection
 
-## Local development
+The project is designed as a portfolio-grade backend + frontend system:
 
-### Infra
+- backend focuses on clean domain layering, ingestion separation, persistence, and query APIs
+- frontend focuses on dashboard-style data presentation
+
+## Tech Stack
+
+### Backend
+
+- Java 21
+- Spring Boot
+- Spring Data JPA
+- PostgreSQL
+- Flyway
+- Maven
+
+### Frontend
+
+- React
+- Vite
+- Apache ECharts
+
+### Data source
+
+- UN Comtrade API
+
+## Architecture
+
+- `backend/` → Spring Boot API, ingestion, persistence, query services
+- `frontend/` → React dashboard
+- `docs/` → technical decisions and project notes
+- `READ_AGENT.md` → working instructions for AI-assisted iteration
+
+## Current Backend Capabilities
+
+### Query layer
+
+- `/api/health`
+- `/api/countries`
+- `/api/trade/partners`
+- `/api/trade/bilateral`
+- `/api/trade/products`
+- `/api/trade/metadata`
+
+### Ingestion layer
+
+- separate application service for imports
+- UN Comtrade adapter
+- import endpoint for narrow controlled slices
+
+### Database
+
+- Flyway migrations
+- seeded countries
+- seeded trade observations
+- imported rows persisted into `trade_observation`
+
+## Current Frontend Capabilities
+
+- dashboard hero section
+- KPI cards
+- partner chart
+- bilateral trend chart
+- product group chart
+- loading states
+- empty states
+- backend-driven filters
+- dark mode toggle
+- theme persistence via localStorage
+
+## Local Development
+
+### Start PostgreSQL
 
 ```bash
 docker compose up -d
@@ -47,55 +94,71 @@ docker compose up -d
 
 ```bash
 cd backend
-CTE_DB_HOST=localhost CTE_DB_PORT=5434 CTE_DB_NAME=trade_explorer CTE_DB_USER=postgres CTE_DB_PASSWORD=postgres mvn spring-boot:run
+
+CTE_DB_HOST=localhost \
+CTE_DB_PORT=5434 \
+CTE_DB_NAME=trade_explorer \
+CTE_DB_USER=postgres \
+CTE_DB_PASSWORD=postgres \
+mvn spring-boot:run
 ```
 
 ### Frontend
 
 ```bash
 cd frontend
+npm install
 npm run dev
 ```
 
-## Testing
-
-### Backend tests
+## Backend Tests
 
 ```bash
 cd backend
-CTE_DB_HOST=localhost CTE_DB_PORT=5434 CTE_DB_NAME=trade_explorer CTE_DB_USER=postgres CTE_DB_PASSWORD=postgres mvn clean test
+
+CTE_DB_HOST=localhost \
+CTE_DB_PORT=5434 \
+CTE_DB_NAME=trade_explorer \
+CTE_DB_USER=postgres \
+CTE_DB_PASSWORD=postgres \
+mvn clean test
 ```
 
-## Dev import endpoint
+## UN Comtrade Configuration
+
+```bash
+export UNCOMTRADE_ENABLED=true
+export UNCOMTRADE_PREVIEW=true
+export UNCOMTRADE_API_KEY="<primary key>"
+export UNCOMTRADE_API_KEY_HEADER_NAME="Ocp-Apim-Subscription-Key"
+export UNCOMTRADE_FINAL_DATA_URL="<working endpoint url>"
+```
+
+## Import Example
 
 ```bash
 curl -X POST http://localhost:8080/api/dev/imports/trade \
   -H "Content-Type: application/json" \
   -d '{
     "reporter": "SWE",
-    "year": 2024,
+    "year": 2022,
     "flow": "EXPORT"
   }'
 ```
 
-## Current implemented step
+## Project Status
 
-- backend health endpoint at `/api/health`
-- frontend connectivity test to backend API
-- CORS enabled for local frontend development
-- `/api/countries` reads country data from PostgreSQL via Spring Data JPA
-- `/api/trade/partners` reads the top 5 partner totals from seeded PostgreSQL trade observations
-- `/api/trade/bilateral` reads yearly trade aggregates from seeded PostgreSQL trade observations
-- `/api/trade/products` reads the top 5 product-group aggregates from seeded PostgreSQL trade observations
-- backend trade metadata endpoint provides available years and flows
-- frontend year and flow filter options are loaded from backend metadata
-- import seed data added so both EXPORT and IMPORT flows return meaningful chart data
-- frontend charts show basic loading and empty-state messaging
-- frontend shared CSS structure replaces most inline styling
-- ingestion/application layer introduced separately from the API query layer
-- trade import source abstraction added for external-source adapters
-- dev-only mock import endpoint added to persist source records into `trade_observation`
-- Spring Data JPA introduced for `country` and `trade_observation`
-- Flyway manages PostgreSQL schema and seed migrations
-- local database setup uses Docker PostgreSQL on host port `5434`
-- project-specific `CTE_DB_*` environment variables avoid conflicts with other apps
+Current state:
+
+- fully working local stack
+- database-backed core trade views
+- real external source adapter connected
+- portfolio-ready dashboard foundation
+
+Next steps:
+
+- screenshot-ready polish
+- README visuals
+- stronger import replacement strategy
+- broader country mapping
+- production-ready real data ingestion
