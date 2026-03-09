@@ -24,3 +24,12 @@ management:
     web:
       exposure:
         include: health,info
+
+uncomtrade:
+  enabled: ${UNCOMTRADE_ENABLED:false}
+  preview: ${UNCOMTRADE_PREVIEW:true}
+  final-data-url: ${UNCOMTRADE_FINAL_DATA_URL:}
+  api-key: ${UNCOMTRADE_API_KEY:}
+  api-key-header-name: ${UNCOMTRADE_API_KEY_HEADER_NAME:Ocp-Apim-Subscription-Key}
+  max-records: ${UNCOMTRADE_MAX_RECORDS:500}
+  commodity-codes: ${UNCOMTRADE_COMMODITY_CODES:84,85,27,30,04,87,44,48,26,90,12}
