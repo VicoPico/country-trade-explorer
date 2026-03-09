@@ -1,5 +1,6 @@
 package com.example.tradeexplorer.trade.importer.application;
 
+import com.example.tradeexplorer.country.repository.CountryRepository;
 import com.example.tradeexplorer.trade.entity.TradeObservationEntity;
 import com.example.tradeexplorer.trade.importer.dto.TradeImportRequest;
 import com.example.tradeexplorer.trade.importer.dto.TradeImportResponse;
@@ -16,13 +17,16 @@ public class TradeImportService {
 
     private final TradeImportSource tradeImportSource;
     private final TradeObservationRepository tradeObservationRepository;
+    private final CountryRepository countryRepository;
 
     public TradeImportService(
             TradeImportSource tradeImportSource,
-            TradeObservationRepository tradeObservationRepository
+            TradeObservationRepository tradeObservationRepository,
+            CountryRepository countryRepository
     ) {
         this.tradeImportSource = tradeImportSource;
         this.tradeObservationRepository = tradeObservationRepository;
+        this.countryRepository = countryRepository;
     }
 
     @Transactional
@@ -42,6 +46,7 @@ public class TradeImportService {
         );
 
         List<TradeObservationEntity> entities = records.stream()
+                .filter(record -> countryRepository.existsByIso3Code(record.partnerIso3()))
                 .map(record -> new TradeObservationEntity(
                         record.reporterIso3(),
                         record.partnerIso3(),
