@@ -9,7 +9,13 @@ function TradeFilters({
 }) {
   return (
     <section className="panel">
-      <h2>Trade Filters</h2>
+      <div className="panel-heading">
+        <div>
+          <h2>Trade Filters</h2>
+          <p className="panel-subtitle">Drive the current dashboard slice from backend metadata</p>
+        </div>
+        <span className="panel-chip">Metadata</span>
+      </div>
 
       {loading ? (
         <p className="helper-text">Loading filter options...</p>

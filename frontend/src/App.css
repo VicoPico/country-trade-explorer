@@ -113,13 +113,41 @@ body {
 
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
 
 .kpi-card {
   padding: 1rem 1rem 1.1rem;
+}
+
+.kpi-card--blue {
+  background: linear-gradient(180deg, rgba(239, 246, 255, 0.96), rgba(255, 255, 255, 0.96));
+}
+
+.kpi-card--slate {
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(255, 255, 255, 0.96));
+}
+
+.kpi-card--green {
+  background: linear-gradient(180deg, rgba(236, 253, 245, 0.96), rgba(255, 255, 255, 0.96));
+}
+
+.kpi-card--purple {
+  background: linear-gradient(180deg, rgba(245, 243, 255, 0.96), rgba(255, 255, 255, 0.96));
+}
+
+.kpi-card--amber {
+  background: linear-gradient(180deg, rgba(255, 251, 235, 0.96), rgba(255, 255, 255, 0.96));
+}
+
+.kpi-card--cyan {
+  background: linear-gradient(180deg, rgba(236, 254, 255, 0.96), rgba(255, 255, 255, 0.96));
+}
+
+.kpi-card--rose {
+  background: linear-gradient(180deg, rgba(255, 241, 242, 0.96), rgba(255, 255, 255, 0.96));
 }
 
 .kpi-label {
@@ -158,8 +186,34 @@ body {
 
 .panel h2 {
   margin-top: 0;
-  margin-bottom: 0.9rem;
+  margin-bottom: 0.3rem;
   font-size: 1.1rem;
+}
+
+.panel-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+}
+
+.panel-subtitle {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.92rem;
+}
+
+.panel-chip {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
 .form-row {
@@ -209,9 +263,9 @@ body {
   min-height: 400px;
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1200px) {
   .kpi-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
@@ -224,6 +278,12 @@ body {
 
   .chart-grid .panel:last-child {
     grid-column: auto;
+  }
+}
+
+@media (max-width: 700px) {
+  .kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -247,5 +307,9 @@ body {
   .hero-card,
   .hero-side-card {
     padding: 1rem;
+  }
+
+  .panel-heading {
+    flex-direction: column;
   }
 }
