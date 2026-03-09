@@ -72,3 +72,6 @@
 - Introduce a separate ingestion/application layer for trade imports so external-source handling does not get mixed into the API query services used by the UI.
 - Define a `TradeImportSource` abstraction before integrating a real external provider, so source-specific logic stays behind a clear adapter boundary.
 - Add a dev-only mock trade import endpoint as a narrow first ingestion path to validate import orchestration, persistence mapping, and source replacement behavior before integrating UN Comtrade.
+
+- Add a dashboard dark mode toggle with theme persistence in localStorage to improve portfolio presentation without introducing additional frontend state libraries.
+- Move frontend colors to CSS theme variables so both light and dark modes can be maintained consistently as the dashboard grows.

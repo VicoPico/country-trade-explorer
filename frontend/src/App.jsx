@@ -16,7 +16,14 @@ import PartnersChart from './components/PartnersChart'
 import ProductGroupsChart from './components/ProductGroupsChart'
 import TradeFilters from './components/TradeFilters'
 
+const THEME_STORAGE_KEY = 'country-trade-explorer-theme'
+
 function App() {
+  const [theme, setTheme] = useState(() => {
+    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY)
+    return storedTheme || 'light'
+  })
+
   const [health, setHealth] = useState(null)
   const [countries, setCountries] = useState([])
   const [selectedCountryCode, setSelectedCountryCode] = useState('')
@@ -35,6 +42,11 @@ function App() {
   const [partnersLoading, setPartnersLoading] = useState(false)
   const [trendLoading, setTrendLoading] = useState(false)
   const [productsLoading, setProductsLoading] = useState(false)
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem(THEME_STORAGE_KEY, theme)
+  }, [theme])
 
   useEffect(() => {
     fetchHealth()
@@ -116,11 +128,21 @@ function App() {
     [countries, selectedCountryCode],
   )
 
+  function handleThemeToggle() {
+    setTheme((currentTheme) => (currentTheme === 'light' ? 'dark' : 'light'))
+  }
+
   return (
     <div className="app-shell">
       <section className="dashboard-hero">
         <div className="hero-card">
-          <p className="hero-eyebrow">Country Trade Explorer</p>
+          <div className="hero-toolbar">
+            <p className="hero-eyebrow">Country Trade Explorer</p>
+            <button type="button" className="theme-toggle" onClick={handleThemeToggle}>
+              {theme === 'light' ? 'Dark mode' : 'Light mode'}
+            </button>
+          </div>
+
           <h1 className="app-title">Trade dashboard for bilateral relationships and product flows</h1>
           <p className="hero-text">
             Explore partners, trade trends, and product groups with a clean portfolio-style dashboard
@@ -172,7 +194,14 @@ function App() {
         />
 
         <section className="panel">
-          <h2>Dashboard Notes</h2>
+          <div className="panel-heading">
+            <div>
+              <h2>Dashboard Notes</h2>
+              <p className="panel-subtitle">How to read the current view</p>
+            </div>
+            <span className="panel-chip">Guide</span>
+          </div>
+
           <p className="helper-text">
             Use the country selector and the trade filters to switch the current dashboard slice.
           </p>
