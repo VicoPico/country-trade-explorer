@@ -388,3 +388,33 @@ body {
     align-items: flex-start;
   }
 }
+
+.kpi-grid--top {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.kpi-grid--bottom {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.kpi-grid--top .kpi-card {
+  min-height: 150px;
+}
+
+.kpi-grid--bottom .kpi-card {
+  min-height: 135px;
+}
+
+@media (max-width: 900px) {
+  .kpi-grid--top,
+  .kpi-grid--bottom {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .kpi-grid--top,
+  .kpi-grid--bottom {
+    grid-template-columns: 1fr;
+  }
+}
