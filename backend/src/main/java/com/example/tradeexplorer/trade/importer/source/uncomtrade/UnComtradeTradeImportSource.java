@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -19,6 +21,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 public class UnComtradeTradeImportSource implements TradeImportSource {
+
+    private static final Logger log = LoggerFactory.getLogger(
+        UnComtradeTradeImportSource.class
+    );
 
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
@@ -92,6 +98,10 @@ public class UnComtradeTradeImportSource implements TradeImportSource {
             properties.getCommodityCodes()
         );
 
+        String partnerCode = StringUtils.hasText(properties.getPartnerCode())
+            ? properties.getPartnerCode().trim()
+            : "all";
+
         String url = UriComponentsBuilder
             .fromUriString(properties.getFinalDataUrl())
             .queryParam("typeCode", "C")
@@ -101,7 +111,7 @@ public class UnComtradeTradeImportSource implements TradeImportSource {
             .queryParam("reporterCode", reporterNumeric)
             .queryParam("cmdCode", commodityCodeList)
             .queryParam("flowCode", flowCode)
-            .queryParam("partnerCode", "0")
+            .queryParam("partnerCode", partnerCode)
             .queryParam("partner2Code", "")
             .queryParam("customsCode", "")
             .queryParam("motCode", "")
@@ -113,6 +123,16 @@ public class UnComtradeTradeImportSource implements TradeImportSource {
             .queryParam("includeDesc", "true")
             .build(true)
             .toUriString();
+
+        log.debug(
+            "UN Comtrade request: reporter={}, year={}, flow={}, partnerCode={}, cmdCodes={}, maxRecords={}",
+            reporterIso3.toUpperCase(),
+            periodYear,
+            flow.toUpperCase(),
+            partnerCode,
+            commodityCodeList,
+            properties.getMaxRecords()
+        );
 
         try {
             RestClient.RequestHeadersSpec<?> request = restClient
@@ -187,11 +207,14 @@ public class UnComtradeTradeImportSource implements TradeImportSource {
         Integer periodYear,
         String flow
     ) {
-        String partnerIso3 = firstNonBlank(
+        String partnerIso3Raw = firstNonBlank(
             text(item, "partnerISO"),
+            text(item, "partnerISO3"),
             text(item, "partnerIso3"),
+            text(item, "pt3ISO"),
             mapPartnerNumericToIso3(text(item, "partnerCode"))
         );
+        String partnerIso3 = normalizeIso3(partnerIso3Raw);
 
         String productCode = firstNonBlank(
             text(item, "cmdCode"),
@@ -250,6 +273,13 @@ public class UnComtradeTradeImportSource implements TradeImportSource {
             }
         }
         return null;
+    }
+
+    private String normalizeIso3(String iso3) {
+        if (!StringUtils.hasText(iso3)) {
+            return null;
+        }
+        return iso3.trim().toUpperCase();
     }
 
     private String mapFlow(String flow) {
