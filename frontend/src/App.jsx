@@ -26,12 +26,17 @@ function App() {
   });
 
   const [health, setHealth] = useState(null);
+  const [healthLoading, setHealthLoading] = useState(true);
+  const [healthError, setHealthError] = useState(null);
   const [countries, setCountries] = useState([]);
+  const [countriesLoading, setCountriesLoading] = useState(true);
+  const [countriesError, setCountriesError] = useState(null);
   const [selectedCountryCode, setSelectedCountryCode] = useState("");
 
   const [availableYears, setAvailableYears] = useState([]);
   const [availableFlows, setAvailableFlows] = useState([]);
   const [metadataLoading, setMetadataLoading] = useState(true);
+  const [metadataError, setMetadataError] = useState(null);
 
   const [selectedYear, setSelectedYear] = useState(null);
   const [selectedFlow, setSelectedFlow] = useState("");
@@ -44,6 +49,10 @@ function App() {
   const [trendLoading, setTrendLoading] = useState(false);
   const [productsLoading, setProductsLoading] = useState(false);
 
+  const [partnersError, setPartnersError] = useState(null);
+  const [trendError, setTrendError] = useState(null);
+  const [productsError, setProductsError] = useState(null);
+
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem(THEME_STORAGE_KEY, theme);
@@ -52,6 +61,9 @@ function App() {
   useEffect(() => {
     const controller = new AbortController();
     let active = true;
+
+    setHealthLoading(true);
+    setHealthError(null);
 
     fetchHealth({
       signal: controller.signal,
@@ -64,11 +76,16 @@ function App() {
       .catch((error) => {
         if (!active) return;
         if (error?.name === "AbortError") return;
-
-        setHealth({
-          status: "DOWN",
-          service: "backend unreachable",
-        });
+        setHealth(null);
+        setHealthError(
+          error?.name === "TimeoutError"
+            ? "Health check timed out."
+            : "Backend unreachable.",
+        );
+      })
+      .finally(() => {
+        if (!active) return;
+        setHealthLoading(false);
       });
 
     return () => {
@@ -80,6 +97,9 @@ function App() {
   useEffect(() => {
     const controller = new AbortController();
     let active = true;
+
+    setCountriesLoading(true);
+    setCountriesError(null);
 
     fetchCountries({
       signal: controller.signal,
@@ -96,6 +116,15 @@ function App() {
         if (!active) return;
         if (error?.name === "AbortError") return;
         setCountries([]);
+        setCountriesError(
+          error?.name === "TimeoutError"
+            ? "Loading countries timed out."
+            : "Failed to load countries.",
+        );
+      })
+      .finally(() => {
+        if (!active) return;
+        setCountriesLoading(false);
       });
 
     return () => {
@@ -109,6 +138,7 @@ function App() {
     let active = true;
 
     setMetadataLoading(true);
+    setMetadataError(null);
 
     fetchTradeMetadata({
       signal: controller.signal,
@@ -134,6 +164,11 @@ function App() {
         if (error?.name === "AbortError") return;
         setAvailableYears([]);
         setAvailableFlows([]);
+        setMetadataError(
+          error?.name === "TimeoutError"
+            ? "Loading metadata timed out."
+            : "Failed to load filter metadata.",
+        );
       })
       .finally(() => {
         if (!active) return;
@@ -149,6 +184,7 @@ function App() {
   useEffect(() => {
     if (!selectedCountryCode || !selectedYear || !selectedFlow) {
       setPartnersLoading(false);
+      setPartnersError(null);
       return;
     }
 
@@ -156,6 +192,7 @@ function App() {
     let active = true;
 
     setPartnersLoading(true);
+    setPartnersError(null);
     fetchTopPartners(selectedCountryCode, selectedYear, selectedFlow, {
       signal: controller.signal,
       timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS,
@@ -168,6 +205,11 @@ function App() {
         if (!active) return;
         if (error?.name === "AbortError") return;
         setPartners([]);
+        setPartnersError(
+          error?.name === "TimeoutError"
+            ? "Loading partners timed out."
+            : "Failed to load partners.",
+        );
       })
       .finally(() => {
         if (!active) return;
@@ -183,6 +225,7 @@ function App() {
   useEffect(() => {
     if (!selectedCountryCode || !selectedFlow) {
       setTrendLoading(false);
+      setTrendError(null);
       return;
     }
 
@@ -190,6 +233,7 @@ function App() {
     let active = true;
 
     setTrendLoading(true);
+    setTrendError(null);
     fetchBilateralTrend(selectedCountryCode, selectedFlow, {
       signal: controller.signal,
       timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS,
@@ -202,6 +246,11 @@ function App() {
         if (!active) return;
         if (error?.name === "AbortError") return;
         setTrendData([]);
+        setTrendError(
+          error?.name === "TimeoutError"
+            ? "Loading trend timed out."
+            : "Failed to load trend.",
+        );
       })
       .finally(() => {
         if (!active) return;
@@ -217,6 +266,7 @@ function App() {
   useEffect(() => {
     if (!selectedCountryCode || !selectedYear || !selectedFlow) {
       setProductsLoading(false);
+      setProductsError(null);
       return;
     }
 
@@ -224,6 +274,7 @@ function App() {
     let active = true;
 
     setProductsLoading(true);
+    setProductsError(null);
     fetchTopProducts(selectedCountryCode, selectedYear, selectedFlow, {
       signal: controller.signal,
       timeoutMs: DEFAULT_REQUEST_TIMEOUT_MS,
@@ -236,6 +287,11 @@ function App() {
         if (!active) return;
         if (error?.name === "AbortError") return;
         setProducts([]);
+        setProductsError(
+          error?.name === "TimeoutError"
+            ? "Loading products timed out."
+            : "Failed to load products.",
+        );
       })
       .finally(() => {
         if (!active) return;
@@ -267,6 +323,7 @@ function App() {
               type="button"
               className="theme-toggle"
               onClick={handleThemeToggle}
+              aria-pressed={theme === "dark"}
             >
               {theme === "light" ? "Dark mode" : "Light mode"}
             </button>
@@ -304,7 +361,11 @@ function App() {
       />
 
       <section className="controls-grid">
-        <HealthStatus health={health} />
+        <HealthStatus
+          health={health}
+          loading={healthLoading}
+          error={healthError}
+        />
 
         <TradeFilters
           years={availableYears}
@@ -312,6 +373,7 @@ function App() {
           year={selectedYear ?? ""}
           flow={selectedFlow}
           loading={metadataLoading}
+          error={metadataError}
           onYearChange={setSelectedYear}
           onFlowChange={setSelectedFlow}
         />
@@ -320,6 +382,8 @@ function App() {
       <section className="controls-grid">
         <CountrySelector
           countries={countries}
+          loading={countriesLoading}
+          error={countriesError}
           selectedCountryCode={selectedCountryCode}
           selectedCountry={selectedCountry}
           onCountryChange={setSelectedCountryCode}
@@ -351,6 +415,7 @@ function App() {
           selectedCountry={selectedCountry}
           partners={partners}
           loading={partnersLoading}
+          error={partnersError}
           theme={theme}
         />
 
@@ -358,6 +423,7 @@ function App() {
           selectedCountry={selectedCountry}
           trendData={trendData}
           loading={trendLoading}
+          error={trendError}
           theme={theme}
         />
 
@@ -365,6 +431,7 @@ function App() {
           selectedCountry={selectedCountry}
           products={products}
           loading={productsLoading}
+          error={productsError}
           theme={theme}
         />
       </section>

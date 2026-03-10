@@ -1,20 +1,31 @@
 function CountrySelector({
   countries,
+  loading,
+  error,
   selectedCountryCode,
   selectedCountry,
   onCountryChange,
 }) {
+  const hasCountries = countries.length > 0;
+  const selectDisabled = loading || !hasCountries;
+
   return (
-    <section className="panel">
+    <section className="panel" aria-busy={loading ? "true" : "false"}>
       <div className="panel-heading">
         <div>
           <h2>Country Selector</h2>
-          <p className="panel-subtitle">Choose the reporter country for the dashboard</p>
+          <p className="panel-subtitle">
+            Choose the reporter country for the dashboard
+          </p>
         </div>
         <span className="panel-chip">Reporter</span>
       </div>
 
-      {countries.length > 0 ? (
+      {loading ? (
+        <p className="helper-text">Loading countries...</p>
+      ) : error ? (
+        <p className="helper-text">{error}</p>
+      ) : hasCountries ? (
         <>
           <div className="field-group">
             <label htmlFor="country-select">Select a country:</label>
@@ -23,6 +34,7 @@ function CountrySelector({
               className="select-input"
               value={selectedCountryCode}
               onChange={(event) => onCountryChange(event.target.value)}
+              disabled={selectDisabled}
             >
               {countries.map((country) => (
                 <option key={country.code} value={country.code}>
@@ -33,19 +45,19 @@ function CountrySelector({
           </div>
 
           <p className="selected-country">
-            Selected country:{' '}
+            Selected country:{" "}
             <strong>
               {selectedCountry
                 ? `${selectedCountry.name} (${selectedCountry.code})`
-                : 'None'}
+                : "None"}
             </strong>
           </p>
         </>
       ) : (
-        <p className="helper-text">Loading countries...</p>
+        <p className="helper-text">No countries available.</p>
       )}
     </section>
-  )
+  );
 }
 
-export default CountrySelector
+export default CountrySelector;
