@@ -31,5 +31,13 @@ uncomtrade:
   final-data-url: ${UNCOMTRADE_FINAL_DATA_URL:}
   api-key: ${UNCOMTRADE_API_KEY:}
   api-key-header-name: ${UNCOMTRADE_API_KEY_HEADER_NAME:Ocp-Apim-Subscription-Key}
+  partner-code: ${UNCOMTRADE_PARTNER_CODE:all}
   max-records: ${UNCOMTRADE_MAX_RECORDS:500}
   commodity-codes: ${UNCOMTRADE_COMMODITY_CODES:84,85,27,30,04,87,44,48,26,90,12}
+
+tradeexplorer:
+  bootstrap-import:
+    enabled: ${CTE_BOOTSTRAP_ENABLED:true}
+    reporter: ${CTE_BOOTSTRAP_REPORTER:USA}
+    year: ${CTE_BOOTSTRAP_YEAR:2024}
+    flow: ${CTE_BOOTSTRAP_FLOW:IMPORT}
