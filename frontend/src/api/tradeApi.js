@@ -5,13 +5,18 @@ function createAbortSignal({ signal, timeoutMs }) {
 
   const controller = new AbortController();
 
+  let timedOut = false;
+
   let timeoutId;
   if (
     typeof timeoutMs === "number" &&
     Number.isFinite(timeoutMs) &&
     timeoutMs > 0
   ) {
-    timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    timeoutId = setTimeout(() => {
+      timedOut = true;
+      controller.abort();
+    }, timeoutMs);
   }
 
   function onAbort() {
@@ -28,6 +33,9 @@ function createAbortSignal({ signal, timeoutMs }) {
 
   return {
     signal: controller.signal,
+    get timedOut() {
+      return timedOut;
+    },
     cleanup() {
       if (timeoutId) clearTimeout(timeoutId);
       if (signal) signal.removeEventListener("abort", onAbort);
@@ -50,6 +58,18 @@ async function fetchJson(path, options = {}) {
     }
 
     return response.json();
+  } catch (error) {
+    if (
+      error?.name === "AbortError" &&
+      composedSignal?.timedOut &&
+      !options?.signal?.aborted
+    ) {
+      const timeoutError = new Error("Request timed out");
+      timeoutError.name = "TimeoutError";
+      throw timeoutError;
+    }
+
+    throw error;
   } finally {
     composedSignal?.cleanup();
   }

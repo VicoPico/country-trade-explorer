@@ -1,16 +1,18 @@
 import { useMemo } from "react";
 import ReactECharts from "echarts-for-react";
 import { applyEChartsTheme, getEChartsThemeTokens } from "./echartsTheme";
+import { formatTradeValue } from "../utils/formatTradeValue";
 
-function formatTradeValue(value) {
-  return new Intl.NumberFormat("en-US", {
-    notation: "compact",
-    maximumFractionDigits: 1,
-  }).format(value);
-}
-
-function PartnersChart({ selectedCountry, partners, loading, theme }) {
+function PartnersChart({ selectedCountry, partners, loading, error, theme }) {
   const hasData = partners.length > 0;
+
+  const partnerLabels = useMemo(
+    () =>
+      partners.map((partner) =>
+        String(partner?.partnerName ?? partner?.partner ?? "Unknown").trim(),
+      ),
+    [partners],
+  );
 
   const chartTokens = useMemo(() => getEChartsThemeTokens(), [theme]);
 
@@ -44,7 +46,7 @@ function PartnersChart({ selectedCountry, partners, loading, theme }) {
       },
       xAxis: {
         type: "category",
-        data: partners.map((partner) => partner.partnerName),
+        data: partnerLabels,
         axisLabel: {
           rotate: 25,
         },
@@ -70,10 +72,10 @@ function PartnersChart({ selectedCountry, partners, loading, theme }) {
     };
 
     return applyEChartsTheme(baseOption, chartTokens);
-  }, [selectedCountry, hasData, partners, chartTokens]);
+  }, [selectedCountry, hasData, partners, chartTokens, partnerLabels]);
 
   return (
-    <section className="panel">
+    <section className="panel" aria-busy={loading ? "true" : "false"}>
       <div className="panel-heading">
         <div>
           <h2>Top Trading Partners</h2>
@@ -86,6 +88,8 @@ function PartnersChart({ selectedCountry, partners, loading, theme }) {
 
       {loading ? (
         <p className="helper-text">Loading top trading partners...</p>
+      ) : error ? (
+        <p className="helper-text">{error}</p>
       ) : hasData ? (
         <div className="chart-container">
           <ReactECharts option={chartOption} style={{ height: "400px" }} />

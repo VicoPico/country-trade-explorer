@@ -1,16 +1,24 @@
 import { useMemo } from "react";
 import ReactECharts from "echarts-for-react";
 import { applyEChartsTheme, getEChartsThemeTokens } from "./echartsTheme";
+import { formatTradeValue } from "../utils/formatTradeValue";
 
-function formatTradeValue(value) {
-  return new Intl.NumberFormat("en-US", {
-    notation: "compact",
-    maximumFractionDigits: 1,
-  }).format(value);
-}
-
-function ProductGroupsChart({ selectedCountry, products, loading, theme }) {
+function ProductGroupsChart({
+  selectedCountry,
+  products,
+  loading,
+  error,
+  theme,
+}) {
   const hasData = products.length > 0;
+
+  const productLabels = useMemo(
+    () =>
+      products.map((product) =>
+        String(product?.productName ?? product?.product ?? "Unknown").trim(),
+      ),
+    [products],
+  );
 
   const chartTokens = useMemo(() => getEChartsThemeTokens(), [theme]);
 
@@ -44,7 +52,7 @@ function ProductGroupsChart({ selectedCountry, products, loading, theme }) {
       },
       xAxis: {
         type: "category",
-        data: products.map((product) => product.productName),
+        data: productLabels,
         axisLabel: {
           rotate: 25,
         },
@@ -70,10 +78,10 @@ function ProductGroupsChart({ selectedCountry, products, loading, theme }) {
     };
 
     return applyEChartsTheme(baseOption, chartTokens);
-  }, [selectedCountry, hasData, products, chartTokens]);
+  }, [selectedCountry, hasData, products, chartTokens, productLabels]);
 
   return (
-    <section className="panel">
+    <section className="panel" aria-busy={loading ? "true" : "false"}>
       <div className="panel-heading">
         <div>
           <h2>Top Product Groups</h2>
@@ -86,6 +94,8 @@ function ProductGroupsChart({ selectedCountry, products, loading, theme }) {
 
       {loading ? (
         <p className="helper-text">Loading top product groups...</p>
+      ) : error ? (
+        <p className="helper-text">{error}</p>
       ) : hasData ? (
         <div className="chart-container">
           <ReactECharts option={chartOption} style={{ height: "400px" }} />

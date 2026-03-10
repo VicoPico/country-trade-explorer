@@ -4,21 +4,31 @@ function TradeFilters({
   year,
   flow,
   loading,
+  error,
   onYearChange,
   onFlowChange,
 }) {
+  const hasYears = years.length > 0;
+  const hasFlows = flows.length > 0;
+
   return (
-    <section className="panel">
+    <section className="panel" aria-busy={loading ? "true" : "false"}>
       <div className="panel-heading">
         <div>
           <h2>Trade Filters</h2>
-          <p className="panel-subtitle">Drive the current dashboard slice from backend metadata</p>
+          <p className="panel-subtitle">
+            Drive the current dashboard slice from backend metadata
+          </p>
         </div>
         <span className="panel-chip">Metadata</span>
       </div>
 
       {loading ? (
         <p className="helper-text">Loading filter options...</p>
+      ) : error ? (
+        <p className="helper-text">{error}</p>
+      ) : !hasYears || !hasFlows ? (
+        <p className="helper-text">No filter metadata available.</p>
       ) : (
         <div className="form-row">
           <div className="field-group">
@@ -55,7 +65,7 @@ function TradeFilters({
         </div>
       )}
     </section>
-  )
+  );
 }
 
-export default TradeFilters
+export default TradeFilters;

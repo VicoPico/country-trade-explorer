@@ -1,15 +1,15 @@
 import { useMemo } from "react";
 import ReactECharts from "echarts-for-react";
 import { applyEChartsTheme, getEChartsThemeTokens } from "./echartsTheme";
+import { formatTradeValue } from "../utils/formatTradeValue";
 
-function formatTradeValue(value) {
-  return new Intl.NumberFormat("en-US", {
-    notation: "compact",
-    maximumFractionDigits: 1,
-  }).format(value);
-}
-
-function BilateralTrendChart({ selectedCountry, trendData, loading, theme }) {
+function BilateralTrendChart({
+  selectedCountry,
+  trendData,
+  loading,
+  error,
+  theme,
+}) {
   const hasData = trendData.length > 0;
 
   const chartTokens = useMemo(() => getEChartsThemeTokens(), [theme]);
@@ -68,7 +68,7 @@ function BilateralTrendChart({ selectedCountry, trendData, loading, theme }) {
   }, [selectedCountry, hasData, trendData, chartTokens]);
 
   return (
-    <section className="panel">
+    <section className="panel" aria-busy={loading ? "true" : "false"}>
       <div className="panel-heading">
         <div>
           <h2>Bilateral Trade Trend</h2>
@@ -81,6 +81,8 @@ function BilateralTrendChart({ selectedCountry, trendData, loading, theme }) {
 
       {loading ? (
         <p className="helper-text">Loading bilateral trade trend...</p>
+      ) : error ? (
+        <p className="helper-text">{error}</p>
       ) : hasData ? (
         <div className="chart-container">
           <ReactECharts option={chartOption} style={{ height: "400px" }} />
