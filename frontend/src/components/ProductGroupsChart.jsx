@@ -24,15 +24,6 @@ function ProductGroupsChart({
 
   const chartOption = useMemo(() => {
     const baseOption = {
-      title: {
-        text: selectedCountry
-          ? `Top Product Groups — ${selectedCountry.name}`
-          : "Top Product Groups",
-        subtext: hasData
-          ? "Most valuable categories in the current slice"
-          : "Awaiting product data",
-        left: "center",
-      },
       tooltip: {
         trigger: "axis",
         axisPointer: {
@@ -46,7 +37,7 @@ function ProductGroupsChart({
       grid: {
         left: 40,
         right: 20,
-        top: 80,
+        top: 24,
         bottom: 70,
         containLabel: true,
       },
@@ -55,11 +46,12 @@ function ProductGroupsChart({
         data: productLabels,
         axisLabel: {
           rotate: 25,
+          margin: 12,
+          hideOverlap: true,
         },
       },
       yAxis: {
         type: "value",
-        name: "Trade value",
       },
       series: [
         {
@@ -85,9 +77,7 @@ function ProductGroupsChart({
       <div className="panel-heading">
         <div>
           <h2>Top Product Groups</h2>
-          <p className="panel-subtitle">
-            Which product categories dominate the selected slice
-          </p>
+          <p className="panel-subtitle">Top categories in this slice</p>
         </div>
         <span className="panel-chip">Products</span>
       </div>
@@ -98,7 +88,7 @@ function ProductGroupsChart({
         <p className="helper-text">{error}</p>
       ) : hasData ? (
         <div className="chart-container">
-          <ReactECharts option={chartOption} style={{ height: "400px" }} />
+          <ReactECharts option={chartOption} style={{ height: "100%" }} />
         </div>
       ) : (
         <p className="helper-text">

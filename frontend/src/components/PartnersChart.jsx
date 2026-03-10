@@ -18,15 +18,6 @@ function PartnersChart({ selectedCountry, partners, loading, error, theme }) {
 
   const chartOption = useMemo(() => {
     const baseOption = {
-      title: {
-        text: selectedCountry
-          ? `Top Trading Partners — ${selectedCountry.name}`
-          : "Top Trading Partners",
-        subtext: hasData
-          ? "Ranked by current filtered trade value"
-          : "Awaiting partner data",
-        left: "center",
-      },
       tooltip: {
         trigger: "axis",
         axisPointer: {
@@ -40,7 +31,7 @@ function PartnersChart({ selectedCountry, partners, loading, error, theme }) {
       grid: {
         left: 40,
         right: 20,
-        top: 80,
+        top: 24,
         bottom: 70,
         containLabel: true,
       },
@@ -49,11 +40,12 @@ function PartnersChart({ selectedCountry, partners, loading, error, theme }) {
         data: partnerLabels,
         axisLabel: {
           rotate: 25,
+          margin: 12,
+          hideOverlap: true,
         },
       },
       yAxis: {
         type: "value",
-        name: "Trade value",
       },
       series: [
         {
@@ -79,9 +71,7 @@ function PartnersChart({ selectedCountry, partners, loading, error, theme }) {
       <div className="panel-heading">
         <div>
           <h2>Top Trading Partners</h2>
-          <p className="panel-subtitle">
-            Where the selected country concentrates its trade
-          </p>
+          <p className="panel-subtitle">Concentration by partner</p>
         </div>
         <span className="panel-chip">Partners</span>
       </div>
@@ -92,7 +82,7 @@ function PartnersChart({ selectedCountry, partners, loading, error, theme }) {
         <p className="helper-text">{error}</p>
       ) : hasData ? (
         <div className="chart-container">
-          <ReactECharts option={chartOption} style={{ height: "400px" }} />
+          <ReactECharts option={chartOption} style={{ height: "100%" }} />
         </div>
       ) : (
         <p className="helper-text">
