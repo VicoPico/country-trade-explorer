@@ -16,15 +16,6 @@ function BilateralTrendChart({
 
   const chartOption = useMemo(() => {
     const baseOption = {
-      title: {
-        text: selectedCountry
-          ? `Bilateral Trade Trend — ${selectedCountry.name}`
-          : "Bilateral Trade Trend",
-        subtext: hasData
-          ? "Historical view across available years"
-          : "Awaiting trend data",
-        left: "center",
-      },
       tooltip: {
         trigger: "axis",
         formatter(params) {
@@ -35,17 +26,20 @@ function BilateralTrendChart({
       grid: {
         left: 40,
         right: 20,
-        top: 80,
-        bottom: 40,
+        top: 24,
+        bottom: 70,
         containLabel: true,
       },
       xAxis: {
         type: "category",
         data: trendData.map((item) => item.year),
+        axisLabel: {
+          margin: 12,
+          hideOverlap: true,
+        },
       },
       yAxis: {
         type: "value",
-        name: "Trade value",
       },
       series: [
         {
@@ -72,9 +66,7 @@ function BilateralTrendChart({
       <div className="panel-heading">
         <div>
           <h2>Bilateral Trade Trend</h2>
-          <p className="panel-subtitle">
-            How the selected trade flow changes over time
-          </p>
+          <p className="panel-subtitle">Trade value over time</p>
         </div>
         <span className="panel-chip">Trend</span>
       </div>
@@ -85,7 +77,7 @@ function BilateralTrendChart({
         <p className="helper-text">{error}</p>
       ) : hasData ? (
         <div className="chart-container">
-          <ReactECharts option={chartOption} style={{ height: "400px" }} />
+          <ReactECharts option={chartOption} style={{ height: "100%" }} />
         </div>
       ) : (
         <p className="helper-text">

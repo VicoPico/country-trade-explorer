@@ -1,4 +1,7 @@
 function HealthStatus({ health, loading, error }) {
+  const statusText = health?.status ? String(health.status) : "UNKNOWN";
+  const serviceText = health?.service ? String(health.service) : "";
+
   return (
     <section className="panel" aria-busy={loading ? "true" : "false"}>
       <div className="panel-heading">
@@ -16,7 +19,13 @@ function HealthStatus({ health, loading, error }) {
       ) : error ? (
         <p className="helper-text">{error}</p>
       ) : health ? (
-        <pre className="status-pre">{JSON.stringify(health, null, 2)}</pre>
+        <>
+          <p className="status-summary">
+            Status: <strong>{statusText}</strong>
+            {serviceText ? ` — ${serviceText}` : ""}
+          </p>
+          <pre className="status-pre">{JSON.stringify(health, null, 2)}</pre>
+        </>
       ) : (
         <p className="helper-text">No health data available.</p>
       )}
