@@ -76,6 +76,7 @@ The project is designed as a portfolio-grade backend + frontend system:
 
 - Flyway migrations
 - seeded countries
+- seeded UN M49 numeric codes for countries (used for UN Comtrade reporter/partner mapping)
 - seeded trade observations
 - imported rows persisted into `trade_observation`
 
