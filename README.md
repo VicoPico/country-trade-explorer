@@ -124,7 +124,18 @@ npm run dev
 
 ## Backend Tests
 
+Unit tests (no PostgreSQL required):
+
 ```bash
+cd backend
+mvn clean test
+```
+
+Integration smoke tests (requires PostgreSQL running via Docker):
+
+```bash
+docker compose up -d
+
 cd backend
 
 CTE_DB_HOST=localhost \
@@ -132,7 +143,7 @@ CTE_DB_PORT=5434 \
 CTE_DB_NAME=trade_explorer \
 CTE_DB_USER=postgres \
 CTE_DB_PASSWORD=postgres \
-mvn clean test
+mvn clean verify -Pit
 ```
 
 ## UN Comtrade Configuration

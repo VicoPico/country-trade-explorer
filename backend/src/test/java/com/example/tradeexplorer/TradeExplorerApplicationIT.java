@@ -4,9 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TradeExplorerApplicationTests {
+class TradeExplorerApplicationIT {
 
     @Test
-    void contextLoads() {
-    }
+    void contextLoads() {}
 }
