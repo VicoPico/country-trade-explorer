@@ -1,15 +1,8 @@
 package com.example.tradeexplorer.trade.importer.source.uncomtrade;
 
-import com.example.tradeexplorer.trade.importer.config.UnComtradeProperties;
-import com.example.tradeexplorer.trade.importer.source.ExternalTradeRecord;
-import com.example.tradeexplorer.trade.importer.source.TradeImportSource;
-import com.example.tradeexplorer.trade.importer.source.TradeImportSourceException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -18,6 +11,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import com.example.tradeexplorer.country.service.CountryCodeMapper;
+import com.example.tradeexplorer.trade.importer.config.UnComtradeProperties;
+import com.example.tradeexplorer.trade.importer.source.ExternalTradeRecord;
+import com.example.tradeexplorer.trade.importer.source.TradeImportSource;
+import com.example.tradeexplorer.trade.importer.source.TradeImportSourceException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class UnComtradeTradeImportSource implements TradeImportSource {
@@ -30,38 +31,16 @@ public class UnComtradeTradeImportSource implements TradeImportSource {
     private final ObjectMapper objectMapper;
     private final UnComtradeProperties properties;
 
-    private static final Map<String, String> REPORTER_ISO3_TO_NUMERIC = Map.of(
-        "SWE",
-        "752",
-        "USA",
-        "842",
-        "CHN",
-        "156"
-    );
-
-    private static final Map<String, String> PARTNER_NUMERIC_TO_ISO3 = new HashMap<>();
-
-    static {
-        PARTNER_NUMERIC_TO_ISO3.put("36", "AUS");
-        PARTNER_NUMERIC_TO_ISO3.put("124", "CAN");
-        PARTNER_NUMERIC_TO_ISO3.put("156", "CHN");
-        PARTNER_NUMERIC_TO_ISO3.put("208", "DNK");
-        PARTNER_NUMERIC_TO_ISO3.put("246", "FIN");
-        PARTNER_NUMERIC_TO_ISO3.put("276", "DEU");
-        PARTNER_NUMERIC_TO_ISO3.put("392", "JPN");
-        PARTNER_NUMERIC_TO_ISO3.put("410", "KOR");
-        PARTNER_NUMERIC_TO_ISO3.put("484", "MEX");
-        PARTNER_NUMERIC_TO_ISO3.put("578", "NOR");
-        PARTNER_NUMERIC_TO_ISO3.put("752", "SWE");
-        PARTNER_NUMERIC_TO_ISO3.put("840", "USA");
-    }
+    private final CountryCodeMapper countryCodeMapper;
 
     public UnComtradeTradeImportSource(
         ObjectMapper objectMapper,
-        UnComtradeProperties properties
+        UnComtradeProperties properties,
+        CountryCodeMapper countryCodeMapper
     ) {
         this.objectMapper = objectMapper;
         this.properties = properties;
+        this.countryCodeMapper = countryCodeMapper;
         this.restClient = RestClient.builder().build();
     }
 
@@ -83,12 +62,13 @@ public class UnComtradeTradeImportSource implements TradeImportSource {
             );
         }
 
-        String reporterNumeric = REPORTER_ISO3_TO_NUMERIC.get(
-            reporterIso3.toUpperCase()
-        );
-        if (reporterNumeric == null) {
+        String reporterNumeric = countryCodeMapper
+            .toNumericCode(reporterIso3)
+            .orElse(null);
+        if (!StringUtils.hasText(reporterNumeric)) {
             throw new TradeImportSourceException(
-                "Reporter not supported yet for real import: " + reporterIso3
+                "Reporter not supported yet for real import (missing numeric code mapping): " +
+                reporterIso3
             );
         }
 
@@ -293,9 +273,8 @@ public class UnComtradeTradeImportSource implements TradeImportSource {
     }
 
     private String mapPartnerNumericToIso3(String partnerNumeric) {
-        if (!StringUtils.hasText(partnerNumeric)) {
-            return null;
-        }
-        return PARTNER_NUMERIC_TO_ISO3.get(partnerNumeric.trim());
+        return countryCodeMapper
+            .toIso3CodeFromNumeric(partnerNumeric)
+            .orElse(null);
     }
 }

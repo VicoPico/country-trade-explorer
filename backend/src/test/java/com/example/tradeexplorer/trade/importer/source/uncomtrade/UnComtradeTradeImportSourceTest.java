@@ -1,24 +1,39 @@
 package com.example.tradeexplorer.trade.importer.source.uncomtrade;
 
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import com.example.tradeexplorer.country.service.CountryCodeMapper;
 import com.example.tradeexplorer.trade.importer.config.UnComtradeProperties;
 import com.example.tradeexplorer.trade.importer.source.ExternalTradeRecord;
 import com.example.tradeexplorer.trade.importer.source.TradeImportSourceException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
-
-import java.lang.reflect.Method;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class UnComtradeTradeImportSourceTest {
 
     @Test
     void shouldParseSupportedResponseShape() throws Exception {
         UnComtradeProperties properties = new UnComtradeProperties();
-        UnComtradeTradeImportSource source = new UnComtradeTradeImportSource(new ObjectMapper(), properties);
+        CountryCodeMapper mapper = mock(CountryCodeMapper.class);
+        when(mapper.toIso3CodeFromNumeric("276"))
+            .thenReturn(Optional.of("DEU"));
 
-        String body = """
+        UnComtradeTradeImportSource source = new UnComtradeTradeImportSource(
+            new ObjectMapper(),
+            properties,
+            mapper
+        );
+
+        String body =
+            """
                 {
                   "data": [
                     {
@@ -37,22 +52,23 @@ class UnComtradeTradeImportSourceTest {
                 }
                 """;
 
-        Method method = UnComtradeTradeImportSource.class.getDeclaredMethod(
-                "parseRecords",
-                String.class,
-                String.class,
-                Integer.class,
-                String.class
-        );
+        Method method =
+            UnComtradeTradeImportSource.class.getDeclaredMethod(
+                    "parseRecords",
+                    String.class,
+                    String.class,
+                    Integer.class,
+                    String.class
+                );
         method.setAccessible(true);
 
         @SuppressWarnings("unchecked")
         List<ExternalTradeRecord> records = (List<ExternalTradeRecord>) method.invoke(
-                source,
-                body,
-                "SWE",
-                2024,
-                "EXPORT"
+            source,
+            body,
+            "SWE",
+            2024,
+            "EXPORT"
         );
 
         assertEquals(2, records.size());
@@ -67,11 +83,17 @@ class UnComtradeTradeImportSourceTest {
         UnComtradeProperties properties = new UnComtradeProperties();
         properties.setEnabled(true);
         properties.setFinalDataUrl("https://example.com");
-        UnComtradeTradeImportSource source = new UnComtradeTradeImportSource(new ObjectMapper(), properties);
+        CountryCodeMapper mapper = mock(CountryCodeMapper.class);
+        when(mapper.toNumericCode("SWE")).thenReturn(Optional.of("752"));
+        UnComtradeTradeImportSource source = new UnComtradeTradeImportSource(
+            new ObjectMapper(),
+            properties,
+            mapper
+        );
 
         TradeImportSourceException exception = assertThrows(
-                TradeImportSourceException.class,
-                () -> source.fetchTradeRecords("SWE", 2024, "BALANCE")
+            TradeImportSourceException.class,
+            () -> source.fetchTradeRecords("SWE", 2024, "BALANCE")
         );
 
         assertTrue(exception.getMessage().contains("Unsupported flow"));

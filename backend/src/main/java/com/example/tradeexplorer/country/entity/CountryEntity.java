@@ -16,12 +16,19 @@ public class CountryEntity {
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
-    protected CountryEntity() {
-    }
+    @Column(name = "numeric_code", nullable = false, length = 3)
+    private String numericCode;
+
+    protected CountryEntity() {}
 
     public CountryEntity(String iso3Code, String name) {
+        this(iso3Code, name, null);
+    }
+
+    public CountryEntity(String iso3Code, String name, String numericCode) {
         this.iso3Code = iso3Code;
         this.name = name;
+        this.numericCode = numericCode;
     }
 
     public String getIso3Code() {
@@ -30,5 +37,9 @@ public class CountryEntity {
 
     public String getName() {
         return name;
+    }
+
+    public String getNumericCode() {
+        return numericCode;
     }
 }

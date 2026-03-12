@@ -76,6 +76,7 @@ The project is designed as a portfolio-grade backend + frontend system:
 
 - Flyway migrations
 - seeded countries
+- seeded UN M49 numeric codes for countries (used for UN Comtrade reporter/partner mapping)
 - seeded trade observations
 - imported rows persisted into `trade_observation`
 
@@ -142,6 +143,25 @@ export UNCOMTRADE_PREVIEW=true
 export UNCOMTRADE_API_KEY="<primary key>"
 export UNCOMTRADE_API_KEY_HEADER_NAME="Ocp-Apim-Subscription-Key"
 export UNCOMTRADE_FINAL_DATA_URL="<working endpoint url>"
+
+# Optional (defaults to partner breakdown)
+# - all: partner-level rows (recommended)
+# - 0: World totals only
+export UNCOMTRADE_PARTNER_CODE=all
+```
+
+## Bootstrap Import on Startup
+
+If enabled, the backend will automatically import one slice on startup (async) when UN Comtrade is enabled and the final-data URL is configured.
+
+```bash
+# Enable/disable startup import
+export CTE_BOOTSTRAP_ENABLED=true
+
+# Default demo slice
+export CTE_BOOTSTRAP_REPORTER=USA
+export CTE_BOOTSTRAP_YEAR=2024
+export CTE_BOOTSTRAP_FLOW=IMPORT
 ```
 
 ## Import Example
@@ -150,10 +170,16 @@ export UNCOMTRADE_FINAL_DATA_URL="<working endpoint url>"
 curl -X POST http://localhost:8080/api/dev/imports/trade \
   -H "Content-Type: application/json" \
   -d '{
-    "reporter": "SWE",
-    "year": 2022,
-    "flow": "EXPORT"
+    "reporter": "USA",
+    "year": 2024,
+    "flow": "IMPORT"
   }'
+```
+
+To see what slices exist in the database:
+
+```bash
+curl -s http://localhost:8080/api/dev/imports/status | jq
 ```
 
 ## Project Status
